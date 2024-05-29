@@ -5,6 +5,13 @@
             "name": "App",
             "request": "launch",
             "mainClass": "projectcj.App",
+            "projectName": "ProjectCJ_845c6160"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "projectcj.App",
             "projectName": "ProjectCJ_ce5695da"
         },
         {
