@@ -1,8 +1,12 @@
 package projectcj.swing.coding.block;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.scope.ScopableBlock;
+import projectcj.swing.coding.block.special.BlockPolygon;
+import projectcj.swing.coding.block.special.BlockText;
+import projectcj.swing.coding.block.special.GluePoint;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
@@ -11,124 +15,205 @@ import java.util.Vector;
  * Base of blocks.
  */
 public abstract class JBlockBase extends JPanel {
+    // 1 = JNormalBlock, 2 = JScopeBlock
+    protected int TYPE = 0;
+    public int DEFAULT_WIDTH = 100;
+    public int DEFAULT_HEIGHT = 50;
+
     // ID
     static int idReservation = 0;
-    int blockID;
+    protected final int blockID;
 
     // Color for test
     public Color color;
 
     // For tracking another blocks' glue area
-    Display display;
+    protected Display display;
 
     // Block connected to lower part.
     // This block object will be JNormalBlockBase object or null.
-    JNormalBlockBase lowerBlock = null;
+    protected JNormalBlockBase lowerBlock = null;
+
+    // Parameters of block.
+    protected Vector<JBlockBase> params = new Vector<>();
+
+    // Upper scope block.
+    protected ScopableBlock upperScope = null;
+
+    // When block is in another block's parameter, this represents that block
+    protected JBlockBase upperCaller = null;
 
     // Shape
-    Vector<Integer> xs = new Vector<>();
-    Vector<Integer> ys = new Vector<>();
+    // protected Vector<Integer> xs = new Vector<>();
+    // protected Vector<Integer> ys = new Vector<>();
+    // !Change to protected
+    public Vector<BlockPolygon> polygons = new Vector<>();
+    protected Vector<BlockText> texts = new Vector<>();
+    protected Vector<GluePoint> gluePoints = new Vector<>();
 
-    int posx;
-    int posy;
+    public int posx;
+    public int posy;
 
-    int xoffset;
-    int yoffset;
+    protected int additionalWidth = 0;
+    protected int additionalHeight = 0;
 
-    int width;
-    int height;
+    public int xoffset;
+    public int yoffset;
 
     /**
      * Constructor
      * 
-     * @param display original display
+     * @param display
+     *            original display
      */
     public JBlockBase(Display display) {
+        setOpaque(false);
         blockID = idReservation++;
 
         posx = 0;
         posy = 0;
-        xoffset = 0;
-        yoffset = 0;
 
         this.display = display;
 
+        // BlockMouseAdapter mouseAdapter = new BlockMouseAdapter(this);
+        // addMouseMotionListener(mouseAdapter);
+        // addMouseListener(mouseAdapter);
+    }
 
-        BlockMouseAdapter mouseAdapter = new BlockMouseAdapter(this);
-        addMouseMotionListener(mouseAdapter);
-        addMouseListener(mouseAdapter);
+    public int getType() {
+        return TYPE;
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // System.out.println("repaint");
-        g.setColor(color);
 
-        // Convert vector to array
-        int xarr[] = new int[xs.size()];
-        int yarr[] = new int[xs.size()];
+        // Anti-aliasing
+        // https://stackoverflow.com/a/13236994
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (int i = 0; i < xarr.length; i++) {
-            xarr[i] = xs.get(i);
-            // System.out.printf("%d ", xarr[i]);
+        // Fill polygons
+        for (BlockPolygon polygon : polygons) {
+            g.setColor(polygon.getColor());
+            g.fillPolygon(polygon.getPolygon());
         }
 
-        // System.out.println();
-
-        for (int i = 0; i < yarr.length; i++) {
-            yarr[i] = ys.get(i);
-            // System.out.printf("%d ", yarr[i]);
+        for (BlockText text : texts) {
+            g.setColor(text.getColor());
+            g.setFont(text.getFont());
+            g.drawString(text.getText(), text.getX(), text.getY() + text.getFont().getSize());
         }
-
-        // System.out.println();
-        // System.out.println();
-
-        // Fill block
-        g.fillPolygon(xarr, yarr, xs.size());
-    }
-
-
-    /**
-     * Get x value of glue point
-     */
-    public int getGlueX() {
-        return posx;
     }
 
     /**
-     * Get y value of glue point
-     */
-    public int getGlueY() {
-        return posy + height;
-    }
-
-    /**
-     * get coordinate of glue point
+     * Get glue points of this block
      * 
-     * @return Point object which refers to glue point
+     * @return GluePoint vector object which refers to glue points
      */
-    public Point getGluePoint() {
-        return new Point(getGlueX(), getGlueY());
+    public Vector<GluePoint> getGluePoints() {
+        return gluePoints;
     }
 
     /**
      * Get target glue object(where this object should be glued).
      * 
-     * @param pos current pos
-     * @return JBlockBase object which refers to glue point
+     * @param pos
+     *            current pos
+     * @return GluePoint object which refers to glue point
      */
-    public JBlockBase getTargetGlueObject(Point pos) {
+    public GluePoint getTargetGlueObject(Point pos) {
         return display.getGlueObject(this, pos);
+    }
+
+    public int getWidth() {
+        return DEFAULT_WIDTH + additionalWidth;
+    }
+
+    public int getHeight() {
+        return DEFAULT_HEIGHT + additionalHeight;
+    }
+
+    public void setWidth(int w) {
+        additionalWidth = w - DEFAULT_HEIGHT;
+    }
+
+    public void setHeight(int h) {
+        additionalHeight = h - DEFAULT_HEIGHT;
+    }
+
+    /**
+     * When params are updated, width of block should be changed
+     * 
+     * @param dw
+     */
+    public void updateWidth(int dw) {
+        additionalWidth += dw;
+        setSize(getWidth(), getHeight());
+
+        // System.out.printf("%d, %d\n", newdw, newdh);
+        // System.out.printf("%d, %d\n", DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT
+        // + additionalHeight);
+    }
+
+    /**
+     * When params are updated, height of block should be changed
+     * 
+     * @param dh
+     */
+    public void updateHeight(int dh) {
+        additionalHeight += dh;
+        // System.out.printf("%d, %d\n", getWidth(), getHeight());
+        setSize(getWidth(), getHeight());
+
+        if (upperCaller != null) {
+            upperCaller.updateHeight(dh);
+        }
+    }
+
+    /**
+     * When polygons are update, block's size should be updated
+     * 
+     * @param dh
+     */
+    public void updateSize() {
+        // When polygons are not loaded
+        if (polygons.size() == 0)
+            return;
+
+        int xmax = 0, ymax = 0;
+        for (BlockPolygon bolygon : polygons) {
+            Polygon polygon = bolygon.getPolygon();
+            for (int i = 0; i < polygon.npoints; i++) {
+                int x = polygon.xpoints[i];
+                int y = polygon.ypoints[i];
+
+                xmax = Math.max(x, xmax);
+                ymax = Math.max(y, ymax);
+            }
+        }
+
+        // System.out.printf("%d, %d\n", xmax, ymax);
+        int newdw = xmax - DEFAULT_WIDTH, newdh = ymax - DEFAULT_HEIGHT;
+        if (additionalWidth != newdw) {
+            updateWidth(newdw - additionalWidth);
+        }
+        if (additionalHeight != newdh) {
+            updateHeight(newdh - additionalHeight);
+        }
     }
 
     /**
      * This method handles movement
      * 
-     * @param e MouseEvent object from mouseDragged event
+     * @param e
+     *            MouseEvent object from mouseDragged event
      */
-    public void handleMove(MouseEvent e) {
-        System.out.println("JBlockBase move (default)");
-        setLocation(posx, posy);
-    }
+    public abstract void handleMove(MouseEvent e);
+
+    /**
+     * Thie method generates polygons of this block
+     * 
+     * @return
+     */
+    public abstract Vector<BlockPolygon> makePolygon();
 }

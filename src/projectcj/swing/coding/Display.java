@@ -2,18 +2,27 @@ package projectcj.swing.coding;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import projectcj.swing.coding.block.JBlankBlock;
+
 import projectcj.swing.coding.block.JBlockBase;
-import projectcj.swing.coding.block.scope.JStartBlock;
+import projectcj.swing.coding.block.scope.function.JStartBlock;
+import projectcj.swing.coding.block.special.GluePoint;
+import projectcj.swing.coding.block.testblocks.JBlankBlock;
+import projectcj.swing.coding.block.testblocks.JHelloWorldBlock;
 import projectcj.swing.coding.console.JConsole;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Display extends JFrame {
     private Container c;
     private Container blockContainer;
-    private Container consoleContainer;
+    private Container console;
+
+    // Mouse click event variables
+    public boolean isClicked = false;
+    public JBlockBase clickedBlock = null;
+
     public ArrayList<JBlockBase> blocks = new ArrayList<>();
 
     int mouseX = 0;
@@ -36,57 +45,73 @@ public class Display extends JFrame {
         blockContainer = new Container();
         blockContainer.setLayout(null);
 
-        consoleContainer = new JConsole();
+        console = new JConsole();
 
         // Records mouse pos
-        blockContainer.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-                // System.out.printf("%d %d\n", mouseX, mouseY);
-            }
+        blockContainer.addMouseMotionListener(new DisplayMouseAdapter(this));
 
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                mouseMoved(e);
-            }
-        });
+        // Find clicks, and send to proper block
+        blockContainer.addMouseListener(new DisplayMouseAdapter(this));
 
         // For test
-        for (int i = 0; i < 5; i++) {
-            JBlankBlock block = new JBlankBlock(this, 120 * i, 60 * i, 100, 50);
-            block.color = new Color(i * 50, i * 50, i * 50);
+        JStartBlock startBlock = new JStartBlock(this);
+        blocks.add(startBlock);
+
+        JHelloWorldBlock helloWorldBlock = new JHelloWorldBlock(this);
+        blocks.add(helloWorldBlock);
+
+        for (int i = 0; i < 10; i++) {
+            JBlankBlock block = new JBlankBlock(this, 120 * i, 60 * i, 100, 50, new Color(i * 20, i * 20, i * 20));
+            block.polygons.elementAt(0).stretchHorizontaly(i * 20);
             blocks.add(block);
-            blockContainer.add(block);
+        }
+
+        for (JBlockBase blk : blocks) {
+            blockContainer.add(blk);
         }
 
         c.add(blockContainer, BorderLayout.CENTER);
-        c.add(consoleContainer, BorderLayout.EAST);
+        c.add(console, BorderLayout.EAST);
         setSize(1280, 720);
         setVisible(true);
+
+        repaint();
+        revalidate();
     }
 
     /**
      * When me is moving, this method returns glue point where me should be glued.
      * 
-     * @param me target
-     * @param mePoint pos of me
+     * @param me
+     *            target
+     * @param mePoint
+     *            pos of me
      * @return JBlockBase object which refers to glue point
      */
-    public JBlockBase getGlueObject(JBlockBase me, Point mePoint) {
+    public GluePoint getGlueObject(JBlockBase me, Point mePoint) {
         // Point mePoint = new Point(me.getX(), me.getY());
+        // System.out.printf("My: %d, %d : %d\n", (int) mePoint.getX(), (int)
+        // mePoint.getY(), me.getType());
 
         for (JBlockBase block : blocks) {
             if (me == block)
                 continue;
 
-            Point blockPoint = block.getGluePoint();
-            double distance = blockPoint.distance(mePoint);
-            System.out.println(distance);
+            Vector<GluePoint> gluePoints = block.getGluePoints();
+            for (GluePoint gluePoint : gluePoints) {
+                // System.out.printf("%d, %d\n", (int) gluePoint.getPoint().getX(), (int)
+                // gluePoint.getPoint().getY());
 
-            if (distance < 10) {
-                return block;
+                // Type checking
+                if ((me.getType() & gluePoint.getType()) == 0)
+                    continue;
+
+                double distance = gluePoint.getPoint().distance(mePoint);
+                // System.out.println(distance);
+
+                if (distance < 10) {
+                    return gluePoint;
+                }
             }
         }
 

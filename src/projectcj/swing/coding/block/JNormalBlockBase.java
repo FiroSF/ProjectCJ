@@ -1,18 +1,19 @@
 package projectcj.swing.coding.block;
 
-import javax.swing.*;
-import javax.swing.event.*;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.scope.ScopableBlock;
+import projectcj.swing.coding.block.special.GluePoint;
+
 import java.awt.*;
 import java.awt.event.*;
 
 /**
  * This class represents normal blocks.
  * 
- * Normal block has two points: upper glue point, lower glue point. and Normal blocks are connected
- * to another blocks, up and down.
+ * Normal block has two points: upper glue point, lower glue point. and Normal
+ * blocks are connected to another blocks, up and down.
  */
-public class JNormalBlockBase extends JBlockBase {
+public abstract class JNormalBlockBase extends JBlockBase {
 
     // Block connected to upper part.
     // This block object will be JBlockBase object or null.
@@ -20,16 +21,23 @@ public class JNormalBlockBase extends JBlockBase {
 
     public JNormalBlockBase(Display display) {
         super(display);
-    }
+        TYPE = 1;
 
+        // Set default gluePoint (bottom of block)
+        Point pointOfGluePoint = new Point(0, DEFAULT_HEIGHT + additionalHeight);
+        GluePoint gluePoint = new GluePoint(this, pointOfGluePoint, GluePoint.NORMAL_LOWER_CHECK);
+        gluePoints.addElement(gluePoint);
+
+    }
 
     /**
      * Get target glue object(where this object should be glued).
      * 
-     * @param pos current pos
-     * @return JBlockBase object which refers to glue point
+     * @param pos
+     *            current pos
+     * @return GluePoint object which refers to glue point
      */
-    public JBlockBase getTargetGlueObject(Point pos) {
+    public GluePoint getTargetGlueObject(Point pos) {
         return display.getGlueObject(this, pos);
     }
 
@@ -38,77 +46,151 @@ public class JNormalBlockBase extends JBlockBase {
      * 
      * @param pos
      */
-    public void movePropagation(Point pos) {
-        System.out.printf("ID: %d\n", blockID);
+    public int movePropagation(Point pos) {
+        // System.out.printf("ID: %d\n", blockID);
         setLocation(pos);
         posx = pos.x;
         posy = pos.y;
 
         if (lowerBlock != null) {
-            lowerBlock.movePropagation(new Point(pos.x, pos.y + height));
+            Point newpos = new Point(pos.x, pos.y + getHeight());
+            return lowerBlock.movePropagation(newpos) + getHeight();
+        }
+        return getHeight();
+    }
+
+    /**
+     * Disconnects properly.
+     * 
+     * @param pos
+     *            Mouse position
+     */
+    public void disconnect(Point pos) {
+        if (this.upperBlock != null) {
+            upperBlock.lowerBlock = null;
+            this.upperBlock = null;
+        }
+
+        int movSize = -movePropagation(pos);
+
+        if (this.upperScope != null) {
+            if (this.upperScope.getInnerBlock() == this) {
+                upperScope.setInnerBlock(null);
+            }
+
+            this.upperScope.updateScopeHeight(movSize);
+
+            // Change lower block's scope
+            JBlockBase now = this;
+            while (now != null) {
+                now.upperScope = null;
+                now = now.lowerBlock;
+            }
         }
     }
 
     /**
-     * When this block is attached to another block's lower part, this method connects blocks
-     * properly.
+     * When this block is attached to another block, this method
+     * connects blocks properly.
      * 
      * This works like linked list.
      * 
-     * @param anotherBlock upper block
+     * @param targetGluePoint
+     *            Target's glue point object
+     * 
      */
-    public void connectTo(JBlockBase anotherBlock) {
-        if (anotherBlock.lowerBlock == this)
-            return;
+    public void connectTo(GluePoint targetGluePoint) {
+        JBlockBase anotherBlock = targetGluePoint.getParent();
 
-        // Moves originaly attached blocks
-        if (anotherBlock.lowerBlock != null) {
+        // Move first
+        int movSize = movePropagation(targetGluePoint.getPoint());
+
+        // Connects
+        if ((targetGluePoint.getType() & GluePoint.NORMAL_LOWER) != 0) {
+            // Attatching at lower part
+            if (anotherBlock.lowerBlock == this)
+                return;
+
+            // Moved from another scope
+            if (anotherBlock.upperScope != null && anotherBlock.upperScope != this.upperScope) {
+                anotherBlock.upperScope.updateScopeHeight(movSize);
+            }
+
+            // Connect
+            // Moves originaly attached blocks
+            // Move scope to upperBlock's scope
+            this.upperScope = anotherBlock.upperScope;
             JBlockBase lowestBlock = this;
 
             while (lowestBlock.lowerBlock != null) {
                 lowestBlock = lowestBlock.lowerBlock;
+                lowestBlock.upperScope = anotherBlock.upperScope;
             }
 
-            lowestBlock.lowerBlock = anotherBlock.lowerBlock;
-            anotherBlock.lowerBlock.upperBlock = lowestBlock;
-        }
+            // Change scope of trailing blocks
+            if (anotherBlock.lowerBlock != null) {
+                lowestBlock.lowerBlock = anotherBlock.lowerBlock;
+                anotherBlock.lowerBlock.upperBlock = lowestBlock;
+            }
 
-        this.upperBlock = anotherBlock;
-        anotherBlock.lowerBlock = this;
-    }
+            this.upperBlock = anotherBlock;
+            anotherBlock.lowerBlock = this;
 
-    public void disconnect() {
-        if (this.upperBlock != null) {
-            upperBlock.lowerBlock = null;
-            this.upperBlock = null;
+        } else if ((targetGluePoint.getType() & GluePoint.SCOPE_INNER) != 0) {
+            // Attatching at inner scope
+            ScopableBlock scopeBlock = (ScopableBlock) anotherBlock;
+            if (scopeBlock == this.upperScope && scopeBlock.getInnerBlock() == this)
+                return;
+
+            // Connect
+            // Move scope to target block's scope
+            this.upperScope = scopeBlock;
+            JBlockBase lowestBlock = this;
+
+            // Change lower block's scopeBlock
+            while (lowestBlock.lowerBlock != null) {
+                lowestBlock = lowestBlock.lowerBlock;
+                lowestBlock.upperScope = scopeBlock;
+            }
+
+            // Add additional lower block
+            JNormalBlockBase formerInnerBlock = scopeBlock.getInnerBlock();
+            lowestBlock.lowerBlock = formerInnerBlock;
+            if (formerInnerBlock != null)
+                formerInnerBlock.upperBlock = lowestBlock;
+
+            // Update scopeBlock's inner block
+            scopeBlock.setInnerBlock(this);
+
+            // Resize upper scope
+            scopeBlock.updateScopeHeight(movSize);
+
+        } else if ((targetGluePoint.getType() & GluePoint.PARAMETER) != 0) {
+            // Attatching at parameter part
+            // TODO parameter attach implement
+
         }
     }
 
     /**
      * This method handles movement
      * 
-     * @param e MouseEvent object from mouseDragged event
+     * @param e
+     *            MouseEvent object from mouseDragged event
      */
     @Override
     public void handleMove(MouseEvent e) {
         Point pos = new Point(posx, posy);
 
-        JBlockBase anotherBlock = getTargetGlueObject(pos);
-        // when there is glue point around this block
-        if (anotherBlock != null) {
-            if (anotherBlock != upperBlock) {
-                disconnect();
-            }
-            connectTo(anotherBlock);
-            movePropagation(anotherBlock.getGluePoint());
+        GluePoint targetGluePoint = getTargetGlueObject(pos);
+        // When there is glue point around this block
+        if (targetGluePoint != null) {
+            connectTo(targetGluePoint);
             return;
         }
 
-        if (upperBlock != null) {
-            disconnect();
-        }
-
-        movePropagation(pos);
+        // No glue point
+        disconnect(pos);
 
         // repaint();
     }

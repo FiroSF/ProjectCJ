@@ -1,5 +1,5 @@
 package projectcj.core.coding.block;
 
-public class BlockBase {
-
+public abstract class BlockBase {
+    public abstract void run();
 }
