@@ -8,7 +8,8 @@ import projectcj.swing.coding.block.scope.function.JStartBlock;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.testblocks.JBlankBlock;
 import projectcj.swing.coding.block.testblocks.JHelloWorldBlock;
-import projectcj.swing.coding.console.JConsole;
+import projectcj.swing.coding.otherui.JConsole;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.Vector;
 
 public class Display extends JFrame {
     private Container c;
-    private Container blockContainer;
+    public Container blockContainer;
     private Container console;
 
     // Mouse click event variables
@@ -39,13 +40,15 @@ public class Display extends JFrame {
     public Display() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // setContentPane(new JLayeredPane());
         c = getContentPane();
-        // c.setLayout(null);
+        // c.setLayout(new BorderLayout());
 
-        blockContainer = new Container();
+        // https://stackoverflow.com/a/18155818/24828578
+        blockContainer = new JLayeredPane();
         blockContainer.setLayout(null);
 
-        console = new JConsole();
+        console = new JConsole(this);
 
         // Records mouse pos
         blockContainer.addMouseMotionListener(new DisplayMouseAdapter(this));
@@ -61,13 +64,14 @@ public class Display extends JFrame {
         blocks.add(helloWorldBlock);
 
         for (int i = 0; i < 10; i++) {
-            JBlankBlock block = new JBlankBlock(this, 120 * i, 60 * i, 100, 50, new Color(i * 20, i * 20, i * 20));
+            JBlankBlock block = new JBlankBlock(this, 120 * i, 60 * i, 100, 50,
+                    new Color(i * 20, i * 20, i * 20));
             block.polygons.elementAt(0).stretchHorizontaly(i * 20);
             blocks.add(block);
         }
 
         for (JBlockBase blk : blocks) {
-            blockContainer.add(blk);
+            blockContainer.add(blk, -1);
         }
 
         c.add(blockContainer, BorderLayout.CENTER);

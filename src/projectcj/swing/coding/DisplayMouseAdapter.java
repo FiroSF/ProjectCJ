@@ -1,6 +1,8 @@
 package projectcj.swing.coding;
 
 import projectcj.swing.coding.block.JBlockBase;
+import projectcj.swing.coding.block.JNormalBlockBase;
+import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 
 import java.awt.*;
@@ -52,6 +54,28 @@ public class DisplayMouseAdapter extends MouseAdapter {
                 if (polygon.contains(mousePoint)) {
                     block.xoffset = mousePoint.x;
                     block.yoffset = mousePoint.y;
+
+                    // Set zindex
+                    display.blockContainer.setComponentZOrder(block, 0);
+
+                    // Manage lower block's zindex
+                    if (block instanceof JNormalBlockBase) {
+                        JNormalBlockBase now = (JNormalBlockBase) block;
+                        while (now.lowerBlock != null) {
+                            now = now.lowerBlock;
+                            display.blockContainer.setComponentZOrder(now, 0);
+                        }
+                    }
+
+                    // Manage inner block's zindex
+                    if (block instanceof JScopableBlock) {
+                        JNormalBlockBase now = ((JScopableBlock) block).getInnerBlock();
+                        while (now != null) {
+                            display.blockContainer.setComponentZOrder(now, 0);
+                            now = now.lowerBlock;
+                        }
+                    }
+
                     display.isClicked = true;
                     display.clickedBlock = block;
 

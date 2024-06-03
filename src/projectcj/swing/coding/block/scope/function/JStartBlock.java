@@ -1,5 +1,8 @@
 package projectcj.swing.coding.block.scope.function;
 
+import projectcj.core.coding.block.BlockBase;
+import projectcj.core.coding.block.scope.function.ScopeBlock;
+import projectcj.core.coding.block.scope.function.StartBlock;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.special.BlockText;
 
@@ -23,4 +26,8 @@ public class JStartBlock extends JScopeBlock {
 
     }
 
+    @Override
+    public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
+        return (T) new StartBlock(scope);
+    }
 }

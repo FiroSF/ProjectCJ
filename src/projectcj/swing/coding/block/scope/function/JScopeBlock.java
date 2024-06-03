@@ -7,11 +7,11 @@ import java.util.Vector;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
-import projectcj.swing.coding.block.scope.ScopableBlock;
+import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.GluePoint;
 
-abstract public class JScopeBlock extends JBlockBase implements ScopableBlock {
+abstract public class JScopeBlock extends JBlockBase implements JScopableBlock {
     JNormalBlockBase innerBlock = null;
 
     // Represents top of inner block

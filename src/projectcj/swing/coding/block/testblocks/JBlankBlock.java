@@ -3,6 +3,8 @@ package projectcj.swing.coding.block.testblocks;
 import java.awt.Color;
 import java.util.Vector;
 
+import projectcj.core.coding.block.BlockBase;
+import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.special.BlockPolygon;
@@ -40,5 +42,10 @@ public class JBlankBlock extends JNormalBlockBase {
         v.add(new BlockPolygon(this, xs, ys));
 
         return v;
+    }
+
+    @Override
+    public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 package projectcj.swing.coding.block;
 
 import projectcj.swing.coding.Display;
-import projectcj.swing.coding.block.scope.ScopableBlock;
+import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.GluePoint;
 
 import java.awt.*;
@@ -11,13 +11,20 @@ import java.awt.event.*;
  * This class represents normal blocks.
  * 
  * Normal block has two points: upper glue point, lower glue point. and Normal
- * blocks are connected to another blocks, up and down.
+ * blocks are connected
+ * to another blocks, up and down.
  */
 public abstract class JNormalBlockBase extends JBlockBase {
+    // Block connected to lower part.
+    // This block object will be JNormalBlockBase object or null.
+    public JNormalBlockBase lowerBlock = null;
 
     // Block connected to upper part.
-    // This block object will be JBlockBase object or null.
-    JBlockBase upperBlock = null;
+    // This block object will be JNormalBlockBase object or null.
+    public JNormalBlockBase upperBlock = null;
+
+    // When block is in another block's parameter, this represents that block
+    public JBlockBase upperCaller = null;
 
     public JNormalBlockBase(Display display) {
         super(display);
@@ -81,7 +88,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
             this.upperScope.updateScopeHeight(movSize);
 
             // Change lower block's scope
-            JBlockBase now = this;
+            JNormalBlockBase now = this;
             while (now != null) {
                 now.upperScope = null;
                 now = now.lowerBlock;
@@ -90,8 +97,8 @@ public abstract class JNormalBlockBase extends JBlockBase {
     }
 
     /**
-     * When this block is attached to another block, this method
-     * connects blocks properly.
+     * When this block is attached to another block, this method connects blocks
+     * properly.
      * 
      * This works like linked list.
      * 
@@ -100,7 +107,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
      * 
      */
     public void connectTo(GluePoint targetGluePoint) {
-        JBlockBase anotherBlock = targetGluePoint.getParent();
+        JBlockBase tmpBlock = targetGluePoint.getParent();
 
         // Move first
         int movSize = movePropagation(targetGluePoint.getPoint());
@@ -108,6 +115,9 @@ public abstract class JNormalBlockBase extends JBlockBase {
         // Connects
         if ((targetGluePoint.getType() & GluePoint.NORMAL_LOWER) != 0) {
             // Attatching at lower part
+            // In this case, anotherBlock should be instance of JNormalBlockBase
+            JNormalBlockBase anotherBlock = (JNormalBlockBase) tmpBlock;
+
             if (anotherBlock.lowerBlock == this)
                 return;
 
@@ -120,7 +130,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
             // Moves originaly attached blocks
             // Move scope to upperBlock's scope
             this.upperScope = anotherBlock.upperScope;
-            JBlockBase lowestBlock = this;
+            JNormalBlockBase lowestBlock = this;
 
             while (lowestBlock.lowerBlock != null) {
                 lowestBlock = lowestBlock.lowerBlock;
@@ -133,42 +143,52 @@ public abstract class JNormalBlockBase extends JBlockBase {
                 anotherBlock.lowerBlock.upperBlock = lowestBlock;
             }
 
-            this.upperBlock = anotherBlock;
+            this.upperBlock = (JNormalBlockBase) anotherBlock;
             anotherBlock.lowerBlock = this;
 
         } else if ((targetGluePoint.getType() & GluePoint.SCOPE_INNER) != 0) {
             // Attatching at inner scope
-            ScopableBlock scopeBlock = (ScopableBlock) anotherBlock;
-            if (scopeBlock == this.upperScope && scopeBlock.getInnerBlock() == this)
+            // In this case, anotherBlock should be instance of JScopableBlock
+            JScopableBlock anotherBlock = (JScopableBlock) tmpBlock;
+            if (anotherBlock == this.upperScope && anotherBlock.getInnerBlock() == this)
                 return;
 
             // Connect
             // Move scope to target block's scope
-            this.upperScope = scopeBlock;
-            JBlockBase lowestBlock = this;
+            this.upperScope = anotherBlock;
+            JNormalBlockBase lowestBlock = this;
 
             // Change lower block's scopeBlock
             while (lowestBlock.lowerBlock != null) {
                 lowestBlock = lowestBlock.lowerBlock;
-                lowestBlock.upperScope = scopeBlock;
+                lowestBlock.upperScope = anotherBlock;
             }
 
             // Add additional lower block
-            JNormalBlockBase formerInnerBlock = scopeBlock.getInnerBlock();
+            JNormalBlockBase formerInnerBlock = anotherBlock.getInnerBlock();
             lowestBlock.lowerBlock = formerInnerBlock;
             if (formerInnerBlock != null)
                 formerInnerBlock.upperBlock = lowestBlock;
 
             // Update scopeBlock's inner block
-            scopeBlock.setInnerBlock(this);
+            anotherBlock.setInnerBlock(this);
 
             // Resize upper scope
-            scopeBlock.updateScopeHeight(movSize);
+            anotherBlock.updateScopeHeight(movSize);
 
         } else if ((targetGluePoint.getType() & GluePoint.PARAMETER) != 0) {
             // Attatching at parameter part
             // TODO parameter attach implement
 
+        }
+    }
+
+    @Override
+    public void updateHeight(int dh) {
+        super.updateHeight(dh);
+
+        if (upperCaller != null) {
+            upperCaller.updateHeight(dh);
         }
     }
 

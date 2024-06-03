@@ -1,8 +1,11 @@
 package projectcj.swing.coding.block;
 
 import javax.swing.*;
+
+import projectcj.core.coding.block.BlockBase;
+import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
-import projectcj.swing.coding.block.scope.ScopableBlock;
+import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.BlockText;
 import projectcj.swing.coding.block.special.GluePoint;
@@ -30,18 +33,11 @@ public abstract class JBlockBase extends JPanel {
     // For tracking another blocks' glue area
     protected Display display;
 
-    // Block connected to lower part.
-    // This block object will be JNormalBlockBase object or null.
-    protected JNormalBlockBase lowerBlock = null;
-
     // Parameters of block.
     protected Vector<JBlockBase> params = new Vector<>();
 
     // Upper scope block.
-    protected ScopableBlock upperScope = null;
-
-    // When block is in another block's parameter, this represents that block
-    protected JBlockBase upperCaller = null;
+    public JScopableBlock upperScope = null;
 
     // Shape
     // protected Vector<Integer> xs = new Vector<>();
@@ -90,7 +86,8 @@ public abstract class JBlockBase extends JPanel {
 
         // Anti-aliasing
         // https://stackoverflow.com/a/13236994
-        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Fill polygons
         for (BlockPolygon polygon : polygons) {
@@ -165,9 +162,6 @@ public abstract class JBlockBase extends JPanel {
         // System.out.printf("%d, %d\n", getWidth(), getHeight());
         setSize(getWidth(), getHeight());
 
-        if (upperCaller != null) {
-            upperCaller.updateHeight(dh);
-        }
     }
 
     /**
@@ -216,4 +210,13 @@ public abstract class JBlockBase extends JPanel {
      * @return
      */
     public abstract Vector<BlockPolygon> makePolygon();
+
+    /**
+     * Compiler helper method
+     * https://yarisong.tistory.com/48
+     * 
+     * @return proper core class
+     */
+    public abstract <T extends BlockBase> T getCoreClassObj(ScopeBlock scope);
+
 }

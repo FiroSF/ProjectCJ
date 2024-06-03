@@ -2,7 +2,7 @@ package projectcj.swing.coding.block.scope;
 
 import projectcj.swing.coding.block.JNormalBlockBase;
 
-public interface ScopableBlock {
+public interface JScopableBlock {
     /**
      * Return inner block.
      * 
