@@ -15,9 +15,9 @@ abstract public class JScopeBlock extends JBlockBase implements JScopableBlock {
     JNormalBlockBase innerBlock = null;
 
     // Represents top of inner block
-    protected int DEFAULT_HEIGHT = 110;
+    protected int DEFAULT_HEIGHT = 100;
     protected int UPPER_DEFAULT_HEIGHT = 50;
-    protected int INNER_DEFAULT_HEIGHT = 50;
+    protected int INNER_DEFAULT_HEIGHT = 40;
     protected int LINE_DEFAULT_WIDTH = 10;
     protected int LOWER_DEFAULT_HEIGHT = 10;
 
@@ -28,7 +28,7 @@ abstract public class JScopeBlock extends JBlockBase implements JScopableBlock {
         TYPE = 2;
 
         // Set default gluePoint (inside of scope)
-        Point pointOfGluePoint = new Point(10, 50);
+        Point pointOfGluePoint = new Point(LINE_DEFAULT_WIDTH, UPPER_DEFAULT_HEIGHT);
         GluePoint gluePoint = new GluePoint(this, pointOfGluePoint, GluePoint.SCOPE_INNER_CHECK);
         gluePoints.addElement(gluePoint);
 
@@ -78,7 +78,7 @@ abstract public class JScopeBlock extends JBlockBase implements JScopableBlock {
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = new Vector<>();
         int[] xs = { 200, 0, 0, 200, 200, 10, 10, 200 };
-        int[] ys = { 40, 40, 110, 110, 100, 100, 50, 50 };
+        int[] ys = { 40, 40, 100, 100, 90, 90, 50, 50 };
         v.add(new BlockPolygon(this, xs, ys, new Color(0x30455D)));
 
         int[] xs2 = { 0, 40, 120, 160 };

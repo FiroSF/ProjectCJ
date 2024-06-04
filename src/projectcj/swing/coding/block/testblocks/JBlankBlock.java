@@ -37,8 +37,8 @@ public class JBlankBlock extends JNormalBlockBase {
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = new Vector<>();
-        int[] xs = { 0, width, width, 0 };
-        int[] ys = { 0, 0, height, height };
+        int[] xs = {0, width, width, 0};
+        int[] ys = {0, 0, height, height};
         v.add(new BlockPolygon(this, xs, ys));
 
         return v;

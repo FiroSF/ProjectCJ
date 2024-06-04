@@ -30,7 +30,7 @@ public abstract class ScopeBlock extends BlockBase implements ScopableBlock {
 
         // Run innerBlocks
         NormalBlockBase now = innerBlock;
-        if (now != null) {
+        while (now != null) {
             now.run();
             now = now.lowerBlock;
         }

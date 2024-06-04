@@ -1,7 +1,5 @@
 package projectcj.core.coding;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
@@ -29,8 +27,7 @@ public class CodeCompiler {
     /**
      * Compile all code.
      * 
-     * @param blocks
-     *            List of swing blocks.
+     * @param blocks List of swing blocks.
      * @return Executor object
      */
     public CodeExecutor compile(ArrayList<JBlockBase> blocks) {
@@ -56,8 +53,7 @@ public class CodeCompiler {
     /**
      * Compiles single function.
      * 
-     * @param jScopeBlock
-     *            Function swing object
+     * @param jScopeBlock Function swing object
      * @return Function core object
      */
     public ScopeBlock compileFunction(CodeExecutor executor, JScopeBlock jScopeBlock) {

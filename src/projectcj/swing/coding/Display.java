@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import projectcj.swing.coding.block.JBlockBase;
+import projectcj.swing.coding.block.preload.io.JWrite;
 import projectcj.swing.coding.block.scope.function.JStartBlock;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.testblocks.JBlankBlock;
@@ -60,8 +61,13 @@ public class Display extends JFrame {
         JStartBlock startBlock = new JStartBlock(this);
         blocks.add(startBlock);
 
-        JHelloWorldBlock helloWorldBlock = new JHelloWorldBlock(this);
-        blocks.add(helloWorldBlock);
+        JWrite jwrite = new JWrite(this);
+        blocks.add(jwrite);
+
+        for (int i = 0; i < 5; i++) {
+            JHelloWorldBlock helloWorldBlock = new JHelloWorldBlock(this, "Hello world!" + i);
+            blocks.add(helloWorldBlock);
+        }
 
         for (int i = 0; i < 10; i++) {
             JBlankBlock block = new JBlankBlock(this, 120 * i, 60 * i, 100, 50,

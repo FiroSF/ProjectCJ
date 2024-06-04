@@ -33,9 +33,6 @@ public abstract class JBlockBase extends JPanel {
     // For tracking another blocks' glue area
     protected Display display;
 
-    // Parameters of block.
-    protected Vector<JBlockBase> params = new Vector<>();
-
     // Upper scope block.
     public JScopableBlock upperScope = null;
 
@@ -71,6 +68,7 @@ public abstract class JBlockBase extends JPanel {
 
         this.display = display;
 
+        beforeGenerate();
         // BlockMouseAdapter mouseAdapter = new BlockMouseAdapter(this);
         // addMouseMotionListener(mouseAdapter);
         // addMouseListener(mouseAdapter);
@@ -212,11 +210,17 @@ public abstract class JBlockBase extends JPanel {
     public abstract Vector<BlockPolygon> makePolygon();
 
     /**
-     * Compiler helper method
-     * https://yarisong.tistory.com/48
+     * Compiler helper method https://yarisong.tistory.com/48
      * 
      * @return proper core class
      */
     public abstract <T extends BlockBase> T getCoreClassObj(ScopeBlock scope);
+
+    /**
+     * Before runs constructors some code, this method will be run first
+     */
+    public void beforeGenerate() {
+
+    }
 
 }
