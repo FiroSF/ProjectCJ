@@ -11,6 +11,9 @@ public class BlockPolygon {
     Polygon polygon = null;
     JBlockBase parent = null;
     Color color = Color.BLACK;
+    public int xOffset = 0;
+    public int yOffset = 0;
+    // if dx and dy is negative, ignore this value.
     int dx = 0, dy = 0;
 
     public void setColor(Color color) {
@@ -47,48 +50,25 @@ public class BlockPolygon {
         this.parent = parent;
     }
 
-    public void stretchHorizontaly(int dx) {
+    public int stretchHorizontaly(int dx) {
+        // diff = delta
+        int diff = Math.max(this.dx, 0);
+
         this.dx += dx;
+        diff = Math.max(this.dx, 0) - diff;
+
         parent.updateSize();
-        // Polygon newPolygon = new Polygon();
-        // int currWidth = (int) polygon.getBounds().getWidth();
-        // int midPoint = currWidth / 2;
-
-        // for (int i = 0; i < polygon.xpoints.length; i++) {
-        // if (polygon.xpoints[i] > midPoint) {
-        // polygon.xpoints[i] += dx;
-        // System.out.println(polygon.xpoints[i]);
-        // }
-
-        // newPolygon.addPoint(polygon.xpoints[i], polygon.ypoints[i]);
-        // }
-
-        // polygon = newPolygon;
-        // parent.updateSize();
+        return diff;
     }
 
-    public void stretchVertically(int dy) {
+    public int stretchVertically(int dy) {
+        int diff = Math.max(this.dy, 0);
+
         this.dy += dy;
+        diff = Math.max(this.dy, 0) - diff;
+
         parent.updateSize();
-        // Polygon newPolygon = new Polygon();
-        // Rectangle bounds = polygon.getBounds();
-        // int currHeight = (int) bounds.getHeight();
-        // int midPoint = currHeight / 2 + bounds.y;
-
-        // System.out.println(midPoint);
-        // System.out.println(bounds.y);
-        // for (int i = 0; i < polygon.ypoints.length; i++) {
-        // System.out.printf("%d ", polygon.ypoints[i]);
-        // if (polygon.ypoints[i] > midPoint) {
-        // polygon.ypoints[i] += dy;
-        // }
-
-        // newPolygon.addPoint(polygon.xpoints[i], polygon.ypoints[i]);
-        // }
-        // System.out.println();
-
-        // polygon = newPolygon;
-        // parent.updateSize();
+        return diff;
     }
 
     public Polygon getPolygon() {
@@ -101,11 +81,14 @@ public class BlockPolygon {
 
         for (int i = 0; i < polygon.xpoints.length; i++) {
             int x = polygon.xpoints[i], y = polygon.ypoints[i];
+
             if (x > midWidth)
                 x += Math.max(0, dx);
+            x += xOffset;
 
             if (y > midHeight)
                 y += Math.max(0, dy);
+            y += yOffset;
 
             newPolygon.addPoint(x, y);
         }

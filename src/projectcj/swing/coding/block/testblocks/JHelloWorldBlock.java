@@ -15,7 +15,7 @@ public class JHelloWorldBlock extends JNormalBlockBase {
     public String hw = "Hello world!";
 
     public JHelloWorldBlock(Display display, String text) {
-        super(display);
+        super(display, new Color(0xFFC200));
         hw = text;
 
         setWidth(DEFAULT_WIDTH);
@@ -29,9 +29,6 @@ public class JHelloWorldBlock extends JNormalBlockBase {
         setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
         setLocation(posx, posy);
 
-        for (BlockPolygon p : polygons) {
-            p.setColor(new Color(0xFFC200));
-        }
     }
 
     @Override
@@ -42,7 +39,7 @@ public class JHelloWorldBlock extends JNormalBlockBase {
     }
 
     public JHelloWorldBlock(Display display) {
-        super(display);
+        super(display, new Color(0xFFC200));
 
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
@@ -54,10 +51,6 @@ public class JHelloWorldBlock extends JNormalBlockBase {
 
         setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
         setLocation(posx, posy);
-
-        for (BlockPolygon p : polygons) {
-            p.setColor(new Color(0xFFC200));
-        }
     }
 
     @Override

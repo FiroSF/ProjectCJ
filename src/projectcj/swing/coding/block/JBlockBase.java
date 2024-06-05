@@ -9,6 +9,7 @@ import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.BlockText;
 import projectcj.swing.coding.block.special.GluePoint;
+import projectcj.swing.coding.block.special.JParameter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,8 +28,8 @@ public abstract class JBlockBase extends JPanel {
     static int idReservation = 0;
     protected final int blockID;
 
-    // Color for test
-    public Color color;
+    // Block color
+    public Color color = Color.GRAY;
 
     // For tracking another blocks' glue area
     protected Display display;
@@ -50,6 +51,7 @@ public abstract class JBlockBase extends JPanel {
     protected int additionalWidth = 0;
     protected int additionalHeight = 0;
 
+    // For mouse move
     public int xoffset;
     public int yoffset;
 
@@ -59,7 +61,7 @@ public abstract class JBlockBase extends JPanel {
      * @param display
      *            original display
      */
-    public JBlockBase(Display display) {
+    public JBlockBase(Display display, Color color) {
         setOpaque(false);
         blockID = idReservation++;
 
@@ -67,6 +69,7 @@ public abstract class JBlockBase extends JPanel {
         posy = 0;
 
         this.display = display;
+        this.color = color;
 
         beforeGenerate();
         // BlockMouseAdapter mouseAdapter = new BlockMouseAdapter(this);
@@ -141,7 +144,7 @@ public abstract class JBlockBase extends JPanel {
      * 
      * @param dw
      */
-    public void updateWidth(int dw) {
+    private void updateWidth(int dw) {
         additionalWidth += dw;
         setSize(getWidth(), getHeight());
 
@@ -155,7 +158,7 @@ public abstract class JBlockBase extends JPanel {
      * 
      * @param dh
      */
-    public void updateHeight(int dh) {
+    private void updateHeight(int dh) {
         additionalHeight += dh;
         // System.out.printf("%d, %d\n", getWidth(), getHeight());
         setSize(getWidth(), getHeight());
@@ -215,6 +218,25 @@ public abstract class JBlockBase extends JPanel {
      * @return proper core class
      */
     public abstract <T extends BlockBase> T getCoreClassObj(ScopeBlock scope);
+
+    /**
+     * Change zIndex of block. And propagation.
+     * 
+     * @param index
+     */
+    public void changeZIndex(int index) {
+        display.blockContainer.setComponentZOrder(this, 0);
+
+        // Manage inner block's zindex
+        if (this instanceof JScopableBlock) {
+            JNormalBlockBase now = ((JScopableBlock) this).getInnerBlock();
+            while (now != null) {
+                now.changeZIndex(0);
+                now = now.lowerBlock;
+            }
+        }
+
+    }
 
     /**
      * Before runs constructors some code, this method will be run first

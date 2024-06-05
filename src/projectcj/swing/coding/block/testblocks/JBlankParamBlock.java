@@ -6,19 +6,21 @@ import java.util.Vector;
 import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.JFunctionRunnerBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.special.BlockPolygon;
+import projectcj.swing.coding.block.variable.JRValue;
 
-public class JBlankBlock extends JNormalBlockBase {
+public class JBlankParamBlock extends JFunctionRunnerBlockBase implements JRValue {
     private int width;
     private int height;
 
-    public JBlankBlock(Display display, int x, int y, int w, int h) {
+    public JBlankParamBlock(Display display, int x, int y, int w, int h) {
         this(display, x, y, w, h, Color.GRAY);
     }
 
-    public JBlankBlock(Display display, int x, int y, int w, int h, Color col) {
-        super(display, col);
+    public JBlankParamBlock(Display display, int x, int y, int w, int h, Color col) {
+        super(display, col, "", 1, x, y);
         width = w;
         height = h;
 
@@ -29,16 +31,6 @@ public class JBlankBlock extends JNormalBlockBase {
         setLocation(posx, posy);
 
         polygons = makePolygon();
-    }
-
-    @Override
-    public Vector<BlockPolygon> makePolygon() {
-        Vector<BlockPolygon> v = new Vector<>();
-        int[] xs = { 0, width, width, 0 };
-        int[] ys = { 0, 0, height, height };
-        v.add(new BlockPolygon(this, xs, ys, color));
-
-        return v;
     }
 
     @Override

@@ -2,10 +2,16 @@ package projectcj.swing.coding.block;
 
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.scope.JScopableBlock;
+import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.GluePoint;
+import projectcj.swing.coding.block.special.JParameter;
+import projectcj.swing.coding.block.special.ParameterGluePoint;
+import projectcj.swing.coding.block.variable.JLValue;
+import projectcj.swing.coding.block.variable.JRValue;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
 
 /**
  * This class represents normal blocks.
@@ -24,11 +30,27 @@ public abstract class JNormalBlockBase extends JBlockBase {
     public JNormalBlockBase upperBlock = null;
 
     // When block is in another block's parameter, this represents that block
-    public JBlockBase upperCaller = null;
+    // public JBlockBase upperCaller = null;
+    public JParameter upperParameter = null;
 
-    public JNormalBlockBase(Display display) {
-        super(display);
+    // JLValue, JRValue offsets
+    public int X_OFFSET = 0;
+
+    public JNormalBlockBase(Display display, Color color) {
+        super(display, color);
         TYPE = 1;
+
+        if (this instanceof JLValue) {
+            TYPE |= GluePoint.LVALUE_BLOCK_TYPE;
+            additionalWidth += 10;
+            X_OFFSET += 10;
+        }
+
+        if (this instanceof JRValue) {
+            TYPE |= GluePoint.RVALUE_BLOCK_TYPE;
+            additionalWidth += 10;
+            X_OFFSET += 10;
+        }
 
         // Set default gluePoint (bottom of block)
         Point pointOfGluePoint = new Point(0, DEFAULT_HEIGHT + additionalHeight);
@@ -52,6 +74,8 @@ public abstract class JNormalBlockBase extends JBlockBase {
      * When object is moved by upper blocks, this method moves object properly.
      * 
      * @param pos
+     * 
+     * @return Moved height
      */
     public int movePropagation(Point pos) {
         // System.out.printf("ID: %d\n", blockID);
@@ -73,6 +97,9 @@ public abstract class JNormalBlockBase extends JBlockBase {
      *            Mouse position
      */
     public void disconnect(Point pos) {
+        // If this block has gluepoint object, implementation of this method will be
+        // much easier...
+
         if (this.upperBlock != null) {
             upperBlock.lowerBlock = null;
             this.upperBlock = null;
@@ -80,7 +107,16 @@ public abstract class JNormalBlockBase extends JBlockBase {
 
         int movSize = -movePropagation(pos);
 
-        if (this.upperScope != null) {
+        if (this.upperParameter != null) {
+            JParameterBlockBase anotherBlock = this.upperParameter.outerBlock;
+
+            // Resize!
+            anotherBlock.changeParameterSize(this.upperParameter.index, -this.getWidth(), -this.getHeight());
+
+            // Move scope to target block's scope
+            this.upperParameter.innerBlock = null;
+            this.upperParameter = null;
+        } else if (this.upperScope != null) {
             if (this.upperScope.getInnerBlock() == this) {
                 upperScope.setInnerBlock(null);
             }
@@ -110,7 +146,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
         JBlockBase tmpBlock = targetGluePoint.getParent();
 
         // Move first
-        int movSize = movePropagation(targetGluePoint.getPoint());
+        int movHeight = movePropagation(targetGluePoint.getPoint());
 
         // Connects
         if ((targetGluePoint.getType() & GluePoint.NORMAL_LOWER) != 0) {
@@ -123,7 +159,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
 
             // Moved from another scope
             if (anotherBlock.upperScope != null && anotherBlock.upperScope != this.upperScope) {
-                anotherBlock.upperScope.updateScopeHeight(movSize);
+                anotherBlock.upperScope.updateScopeHeight(movHeight);
             }
 
             // Connect
@@ -174,22 +210,82 @@ public abstract class JNormalBlockBase extends JBlockBase {
             anotherBlock.setInnerBlock(this);
 
             // Resize upper scope
-            anotherBlock.updateScopeHeight(movSize);
+            anotherBlock.updateScopeHeight(movHeight);
 
         } else if ((targetGluePoint.getType() & GluePoint.PARAMETER) != 0) {
             // Attatching at parameter part
-            // TODO parameter attach implement
+            // In this case, anotherBlock should be instance of JParameterBlockBase
+            ParameterGluePoint targetParamGluePoint = (ParameterGluePoint) targetGluePoint;
+            JParameter targetParam = targetParamGluePoint.getParentParam();
+            JParameterBlockBase anotherBlock = targetParam.outerBlock;
 
+            if (targetParam == this.upperParameter) {
+                // If it's in same pos and same upperCaller, return.
+                return;
+            }
+
+            int movWidth = this.getWidth();
+
+            // Connect
+            // If there is another block already
+            if (targetParam.innerBlock != null) {
+                JNormalBlockBase tmp = (JNormalBlockBase) targetParam.innerBlock;
+
+                // Move original block
+                Point newP = targetParamGluePoint.getPoint();
+                newP.translate(10, 10);
+                tmp.disconnect(newP);
+            }
+
+            // Move scope to target block's scope
+            targetParam.innerBlock = (JRValue) this;
+            this.upperParameter = targetParam;
+
+            // Resize upper scope
+            anotherBlock.changeParameterSize(targetParam.index, movWidth, movHeight);
         }
     }
 
-    @Override
-    public void updateHeight(int dh) {
-        super.updateHeight(dh);
+    // @Override
+    // private void updateHeight(int dh) {
+    // super.updateHeight(dh);
 
-        if (upperCaller != null) {
-            upperCaller.updateHeight(dh);
+    // if (upperParameter != null) {
+    // upperParameter.outerBlock.updateHeight(dh);
+    // }
+    // }
+
+    /**
+     * Marks JLValue, JRValue.
+     */
+    @Override
+    public Vector<BlockPolygon> makePolygon() {
+        Vector<BlockPolygon> v = new Vector<>();
+
+        // Make block polygon
+        // ! I think this should be moved to JNormalBlockBase.
+        int w = getWidth(), h = getHeight();
+        int midh = h / 2;
+        int[] xs = { 0, w, w, 0 };
+        int[] ys = { 0, 0, h, h };
+
+        if (this instanceof JLValue && this instanceof JRValue) {
+            xs = new int[] { 0, w, w, w - 10, w - 10, w, w, 0, 0, 10, 10, 0 };
+            ys = new int[] { 0, 0, midh + 10, midh + 10, midh - 10, midh - 10, h, h, midh + 10, midh + 10, midh - 10,
+                    midh - 10 };
+
+        } else if (this instanceof JLValue) {
+            xs = new int[] { 0, w, w, w - 10, w - 10, w, w, 0 };
+            ys = new int[] { 0, 0, midh + 10, midh + 10, midh - 10, midh - 10, h, h };
+
+        } else if (this instanceof JRValue) {
+            xs = new int[] { 0, w, w, 0, 0, 10, 10, 0 };
+            ys = new int[] { 0, 0, h, h, midh + 10, midh + 10, midh - 10, midh - 10 };
+
         }
+
+        v.add(new BlockPolygon(this, xs, ys, color));
+        return v;
     }
 
     /**
@@ -213,5 +309,18 @@ public abstract class JNormalBlockBase extends JBlockBase {
         disconnect(pos);
 
         // repaint();
+    }
+
+    @Override
+    public void changeZIndex(int index) {
+        super.changeZIndex(index);
+
+        // Manage lower block's zindex
+        JNormalBlockBase now = this;
+
+        if (now.lowerBlock != null) {
+            now = now.lowerBlock;
+            now.changeZIndex(0);
+        }
     }
 }

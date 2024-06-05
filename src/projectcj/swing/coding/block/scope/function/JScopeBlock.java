@@ -24,7 +24,7 @@ abstract public class JScopeBlock extends JBlockBase implements JScopableBlock {
     protected int innerAdditionalHeight = 0;
 
     public JScopeBlock(Display display) {
-        super(display);
+        super(display, new Color(0x30455D));
         TYPE = 2;
 
         // Set default gluePoint (inside of scope)
@@ -79,7 +79,7 @@ abstract public class JScopeBlock extends JBlockBase implements JScopableBlock {
         Vector<BlockPolygon> v = new Vector<>();
         int[] xs = { 200, 0, 0, 200, 200, 10, 10, 200 };
         int[] ys = { 40, 40, 100, 100, 90, 90, 50, 50 };
-        v.add(new BlockPolygon(this, xs, ys, new Color(0x30455D)));
+        v.add(new BlockPolygon(this, xs, ys, color));
 
         int[] xs2 = { 0, 40, 120, 160 };
         int[] ys2 = { 40, 0, 0, 40 };

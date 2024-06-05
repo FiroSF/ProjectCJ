@@ -4,10 +4,15 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import projectcj.swing.coding.block.JBlockBase;
-import projectcj.swing.coding.block.preload.io.JWrite;
+import projectcj.swing.coding.block.JNormalBlockBase;
+import projectcj.swing.coding.block.JParameterBlockBase;
+import projectcj.swing.coding.block.builtin.io.JRead;
+import projectcj.swing.coding.block.builtin.io.JWrite;
 import projectcj.swing.coding.block.scope.function.JStartBlock;
 import projectcj.swing.coding.block.special.GluePoint;
+import projectcj.swing.coding.block.special.JParameter;
 import projectcj.swing.coding.block.testblocks.JBlankBlock;
+import projectcj.swing.coding.block.testblocks.JBlankParamBlock;
 import projectcj.swing.coding.block.testblocks.JHelloWorldBlock;
 import projectcj.swing.coding.otherui.JConsole;
 
@@ -61,6 +66,9 @@ public class Display extends JFrame {
         JStartBlock startBlock = new JStartBlock(this);
         blocks.add(startBlock);
 
+        JRead jread = new JRead(this);
+        blocks.add(jread);
+
         JWrite jwrite = new JWrite(this);
         blocks.add(jwrite);
 
@@ -70,7 +78,7 @@ public class Display extends JFrame {
         }
 
         for (int i = 0; i < 10; i++) {
-            JBlankBlock block = new JBlankBlock(this, 120 * i, 60 * i, 100, 50,
+            JBlankParamBlock block = new JBlankParamBlock(this, 120 * i, 60 * i, 100, 50,
                     new Color(i * 20, i * 20, i * 20));
             block.polygons.elementAt(0).stretchHorizontaly(i * 20);
             blocks.add(block);
@@ -89,6 +97,20 @@ public class Display extends JFrame {
         revalidate();
     }
 
+    private boolean checkGluePoint(JBlockBase me, Point mePoint, GluePoint gluePoint) {
+        // Type checking
+        if ((me.getType() & gluePoint.getType()) == 0)
+            return false;
+
+        double distance = gluePoint.getPoint().distance(mePoint);
+        // System.out.println(distance);
+
+        if (distance < 10) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * When me is moving, this method returns glue point where me should be glued.
      * 
@@ -96,7 +118,7 @@ public class Display extends JFrame {
      *            target
      * @param mePoint
      *            pos of me
-     * @return JBlockBase object which refers to glue point
+     * @return GluePoint object which refers to glue point
      */
     public GluePoint getGlueObject(JBlockBase me, Point mePoint) {
         // Point mePoint = new Point(me.getX(), me.getY());
@@ -107,19 +129,27 @@ public class Display extends JFrame {
             if (me == block)
                 continue;
 
+            // Param gluePoints
+            // it's rvalue, single
+            if ((me.getType() & GluePoint.PARAMETER_CHECK) != 0 && ((JNormalBlockBase) me).lowerBlock == null
+                    && block instanceof JParameterBlockBase) {
+                Vector<JParameter> params = ((JParameterBlockBase) block).parameters;
+
+                for (JParameter param : params) {
+                    // System.out.printf("%d, %d\n", (int) param.gluePoint.getPoint().getX(),
+                    // (int) param.gluePoint.getPoint().getY());
+                    if (checkGluePoint(me, mePoint, param.gluePoint)) {
+                        return param.gluePoint;
+                    }
+                }
+            }
+
+            // Normal gluePoints
             Vector<GluePoint> gluePoints = block.getGluePoints();
             for (GluePoint gluePoint : gluePoints) {
                 // System.out.printf("%d, %d\n", (int) gluePoint.getPoint().getX(), (int)
                 // gluePoint.getPoint().getY());
-
-                // Type checking
-                if ((me.getType() & gluePoint.getType()) == 0)
-                    continue;
-
-                double distance = gluePoint.getPoint().distance(mePoint);
-                // System.out.println(distance);
-
-                if (distance < 10) {
+                if (checkGluePoint(me, mePoint, gluePoint)) {
                     return gluePoint;
                 }
             }

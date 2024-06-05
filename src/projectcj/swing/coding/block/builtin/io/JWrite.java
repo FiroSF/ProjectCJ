@@ -1,4 +1,4 @@
-package projectcj.swing.coding.block.preload.io;
+package projectcj.swing.coding.block.builtin.io;
 
 import java.awt.Color;
 import java.util.Vector;
@@ -18,13 +18,7 @@ import projectcj.swing.coding.block.special.JParameter;
  */
 public class JWrite extends JFunctionRunnerBlockBase {
     public JWrite(Display display) {
-        super(display, "Write", 1, 500, 0);
-    }
-
-    @Override
-    public void changeParameter(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'changeParameter'");
+        super(display, new Color(0xFFC200), "Write", 1, 500, 0);
     }
 
     @Override

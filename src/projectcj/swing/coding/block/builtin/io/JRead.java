@@ -1,24 +1,19 @@
-package projectcj.swing.coding.block.preload.io;
+package projectcj.swing.coding.block.builtin.io;
 
+import java.awt.Color;
 import java.util.Vector;
 import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.JFunctionRunnerBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.variable.JRValue;
 
-public class JRead extends JNormalBlockBase implements JRValue {
+public class JRead extends JFunctionRunnerBlockBase implements JRValue {
 
     public JRead(Display display) {
-        super(display);
-        // TODO Auto-generated constructor stub
-    }
-
-    @Override
-    public Vector<BlockPolygon> makePolygon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'makePolygon'");
+        super(display, new Color(0xD6546A), "Read", 0, 300, 0);
     }
 
     @Override
