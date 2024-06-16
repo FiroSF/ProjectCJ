@@ -16,7 +16,7 @@ public class JStartBlock extends JScopeBlock {
         // Default pos
         posx = 0;
         posy = 300;
-        additionalWidth = 100;
+        additionalWidth = 160;
         additionalHeight = 60;
         setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
         setLocation(posx, posy);

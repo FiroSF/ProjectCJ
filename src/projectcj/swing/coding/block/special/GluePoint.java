@@ -57,4 +57,14 @@ public class GluePoint {
         this.point = point;
         this.type = type;
     }
+
+    /**
+     * Move gluePoint.
+     * 
+     * @param dx
+     * @param dy
+     */
+    public void moveDelta(int dx, int dy) {
+        point = new Point(point.x + dx, point.y + dy);
+    }
 }

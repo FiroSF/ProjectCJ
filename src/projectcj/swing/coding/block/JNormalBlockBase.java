@@ -53,7 +53,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
         }
 
         // Set default gluePoint (bottom of block)
-        Point pointOfGluePoint = new Point(0, DEFAULT_HEIGHT + additionalHeight);
+        Point pointOfGluePoint = new Point(0, getCalcedHeight());
         GluePoint gluePoint = new GluePoint(this, pointOfGluePoint, GluePoint.NORMAL_LOWER_CHECK);
         gluePoints.addElement(gluePoint);
 
@@ -84,10 +84,10 @@ public abstract class JNormalBlockBase extends JBlockBase {
         posy = pos.y;
 
         if (lowerBlock != null) {
-            Point newpos = new Point(pos.x, pos.y + getHeight());
-            return lowerBlock.movePropagation(newpos) + getHeight();
+            Point newpos = new Point(pos.x, pos.y + getCalcedHeight());
+            return lowerBlock.movePropagation(newpos) + getCalcedHeight();
         }
-        return getHeight();
+        return getCalcedHeight();
     }
 
     /**
@@ -111,7 +111,16 @@ public abstract class JNormalBlockBase extends JBlockBase {
             JParameterBlockBase anotherBlock = this.upperParameter.outerBlock;
 
             // Resize!
-            anotherBlock.changeParameterSize(this.upperParameter.index, -this.getWidth(), -this.getHeight());
+            anotherBlock.changeParameterSize(this.upperParameter.index, -this.getCalcedWidth(),
+                    -this.getCalcedHeight());
+
+            // After resize, upper scope's lower blocks should be moved
+            JParameterBlockBase now = anotherBlock;
+            while (now.upperParameter != null) {
+                now = now.upperParameter.outerBlock;
+            }
+            if (now != anotherBlock)
+                now.movePropagation(now.getLocation());
 
             // Move scope to target block's scope
             this.upperParameter.innerBlock = null;
@@ -224,12 +233,13 @@ public abstract class JNormalBlockBase extends JBlockBase {
                 return;
             }
 
-            int movWidth = this.getWidth();
+            int movWidth = this.getCalcedWidth();
 
             // Connect
             // If there is another block already
             if (targetParam.innerBlock != null) {
                 JNormalBlockBase tmp = (JNormalBlockBase) targetParam.innerBlock;
+                System.out.println(111);
 
                 // Move original block
                 Point newP = targetParamGluePoint.getPoint();
@@ -237,12 +247,20 @@ public abstract class JNormalBlockBase extends JBlockBase {
                 tmp.disconnect(newP);
             }
 
+            System.out.println(222);
             // Move scope to target block's scope
             targetParam.innerBlock = (JRValue) this;
             this.upperParameter = targetParam;
 
             // Resize upper scope
             anotherBlock.changeParameterSize(targetParam.index, movWidth, movHeight);
+
+            // After resize, upper scope's lower blocks should be moved
+            JParameterBlockBase now = anotherBlock;
+            while (now.upperParameter != null) {
+                now = now.upperParameter.outerBlock;
+            }
+            now.movePropagation(now.getLocation());
         }
     }
 
@@ -263,24 +281,21 @@ public abstract class JNormalBlockBase extends JBlockBase {
         Vector<BlockPolygon> v = new Vector<>();
 
         // Make block polygon
-        // ! I think this should be moved to JNormalBlockBase.
-        int w = getWidth(), h = getHeight();
-        int midh = h / 2;
+        int w = getCalcedWidth(), h = getCalcedHeight();
         int[] xs = { 0, w, w, 0 };
         int[] ys = { 0, 0, h, h };
 
         if (this instanceof JLValue && this instanceof JRValue) {
             xs = new int[] { 0, w, w, w - 10, w - 10, w, w, 0, 0, 10, 10, 0 };
-            ys = new int[] { 0, 0, midh + 10, midh + 10, midh - 10, midh - 10, h, h, midh + 10, midh + 10, midh - 10,
-                    midh - 10 };
+            ys = new int[] { 0, 0, 10, 10, h - 10, h - 10, h, h, 10, 10, h - 10, h - 10 };
 
         } else if (this instanceof JLValue) {
             xs = new int[] { 0, w, w, w - 10, w - 10, w, w, 0 };
-            ys = new int[] { 0, 0, midh + 10, midh + 10, midh - 10, midh - 10, h, h };
+            ys = new int[] { 0, 0, 10, 10, h - 10, h - 10, h, h };
 
         } else if (this instanceof JRValue) {
             xs = new int[] { 0, w, w, 0, 0, 10, 10, 0 };
-            ys = new int[] { 0, 0, h, h, midh + 10, midh + 10, midh - 10, midh - 10 };
+            ys = new int[] { 0, 0, h, h, 10, 10, h - 10, h - 10 };
 
         }
 

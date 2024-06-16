@@ -149,6 +149,12 @@ public class Display extends JFrame {
             for (GluePoint gluePoint : gluePoints) {
                 // System.out.printf("%d, %d\n", (int) gluePoint.getPoint().getX(), (int)
                 // gluePoint.getPoint().getY());
+
+                // If this block is being used as parameter
+                if (gluePoint.getParent() instanceof JNormalBlockBase)
+                    if (((JNormalBlockBase) gluePoint.getParent()).upperParameter != null)
+                        continue;
+
                 if (checkGluePoint(me, mePoint, gluePoint)) {
                     return gluePoint;
                 }

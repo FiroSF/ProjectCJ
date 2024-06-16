@@ -26,11 +26,15 @@ public abstract class JFunctionRunnerBlockBase extends JParameterBlockBase {
         functionName = fname;
         // TODO: name length part
         FUNCTION_NAME_LENGTH = functionName.length() * 20;
+        additionalWidth += FUNCTION_NAME_LENGTH;
 
         // Add params
         int xOffset = X_OFFSET + FUNCTION_NAME_LENGTH + 10;
         if (paramCount == 0) {
             additionalHeight -= 20;
+            for (GluePoint gluePoint : gluePoints) {
+                gluePoint.moveDelta(0, -20);
+            }
         }
         for (int i = 0; i < paramCount; i++) {
             Point gluePos = new Point(xOffset, 10);
@@ -40,10 +44,11 @@ public abstract class JFunctionRunnerBlockBase extends JParameterBlockBase {
             parameters.add(param);
 
             xOffset += PARAM_DIST;
+            additionalWidth += PARAM_DIST;
         }
 
-        setWidth(DEFAULT_WIDTH + additionalWidth);
-        setHeight(DEFAULT_HEIGHT + additionalHeight);
+        setWidth(getCalcedWidth());
+        setHeight(getCalcedHeight());
         setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
 
         posx = x;
@@ -58,8 +63,8 @@ public abstract class JFunctionRunnerBlockBase extends JParameterBlockBase {
     public void beforeGenerate() {
         super.beforeGenerate();
 
-        DEFAULT_WIDTH = 160;
-        DEFAULT_HEIGHT = 40;
+        // DEFAULT_WIDTH = 160;
+        // DEFAULT_HEIGHT = 40;
         additionalHeight = 20;
     }
 
@@ -71,7 +76,7 @@ public abstract class JFunctionRunnerBlockBase extends JParameterBlockBase {
         // Make parameter polygons
         for (int i = 0; i < parameters.size(); i++) {
             // Param width = 80
-            int[] pxs = { 10, 90, 90, 10, 10, 20, 20, 10 };
+            int[] pxs = { 10, 10 + JParameter.DEFAULT_WIDTH, 10 + JParameter.DEFAULT_WIDTH, 10, 10, 20, 20, 10 };
             int[] pys = { 10, 10, 50, 50, 40, 40, 20, 20 };
             BlockPolygon bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
             bolygon.stretchHorizontaly(-JParameter.DEFAULT_WIDTH);
@@ -93,30 +98,28 @@ public abstract class JFunctionRunnerBlockBase extends JParameterBlockBase {
         JParameter now = parameters.get(index);
 
         // Actual dw and dh
-        // int actualDw = Math.max(dw, JParameter.DEFAULT_WIDTH - now.width);
-        // int actualDh = Math.max(dh, JParameter.DEFAULT_HEIGHT - now.height);
-
         // Change this block's parameter size directly
         int actualDw = now.bolygon.stretchHorizontaly(dw);
         int actualDh = now.bolygon.stretchVertically(dh);
 
-        // int actualDw = Math.max(dw, JParameter.DEFAULT_WIDTH - now.width);
-        // int actualDh = Math.max(dh, JParameter.DEFAULT_HEIGHT - now.height);
+        now.width = now.width + actualDw;
+        now.height = now.height + actualDh;
 
         // Change body size
         polygons.get(0).stretchHorizontaly(actualDw);
         polygons.get(0).stretchVertically(actualDh);
 
-        now.width = now.width + actualDw;
-        now.height = now.height + actualDh;
+        // Change gluePoint pos
+        for (GluePoint gluePoint : gluePoints) {
+            gluePoint.moveDelta(0, actualDh);
+        }
 
         // And move antoher parameters' pos
         for (int i = index + 1; i < parameters.size(); i++) {
             now = parameters.get(i);
 
             // Change bolygon pos and gluePoint pos
-            now.bolygon.xOffset += actualDw;
-            now.bolygon.yOffset += actualDh / 2;
+            now.moveDelta(actualDw, actualDh / 2);
         }
 
         for (BlockText text : texts) {

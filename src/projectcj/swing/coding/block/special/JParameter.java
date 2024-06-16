@@ -27,4 +27,16 @@ public class JParameter {
 
         glue.setParentParam(this);
     }
+
+    /**
+     * Move parameter.
+     * 
+     * @param dx
+     * @param dy
+     */
+    public void moveDelta(int dx, int dy) {
+        bolygon.xOffset += dx;
+        bolygon.yOffset += dy;
+        gluePoint.moveDelta(dx, 0);
+    }
 }

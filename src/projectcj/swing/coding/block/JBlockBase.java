@@ -21,8 +21,8 @@ import java.util.Vector;
 public abstract class JBlockBase extends JPanel {
     // 1 = JNormalBlock, 2 = JScopeBlock
     protected int TYPE = 0;
-    public int DEFAULT_WIDTH = 100;
-    public int DEFAULT_HEIGHT = 50;
+    public int DEFAULT_WIDTH = 40;
+    public int DEFAULT_HEIGHT = 40;
 
     // ID
     static int idReservation = 0;
@@ -123,11 +123,11 @@ public abstract class JBlockBase extends JPanel {
         return display.getGlueObject(this, pos);
     }
 
-    public int getWidth() {
+    public int getCalcedWidth() {
         return DEFAULT_WIDTH + additionalWidth;
     }
 
-    public int getHeight() {
+    public int getCalcedHeight() {
         return DEFAULT_HEIGHT + additionalHeight;
     }
 
@@ -146,7 +146,7 @@ public abstract class JBlockBase extends JPanel {
      */
     private void updateWidth(int dw) {
         additionalWidth += dw;
-        setSize(getWidth(), getHeight());
+        setSize(getCalcedWidth(), getCalcedHeight());
 
         // System.out.printf("%d, %d\n", newdw, newdh);
         // System.out.printf("%d, %d\n", DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT
@@ -160,8 +160,8 @@ public abstract class JBlockBase extends JPanel {
      */
     private void updateHeight(int dh) {
         additionalHeight += dh;
-        // System.out.printf("%d, %d\n", getWidth(), getHeight());
-        setSize(getWidth(), getHeight());
+        // System.out.printf("%d, %d\n", getCalcedWidth(), getCalcedHeight());
+        setSize(getCalcedWidth(), getCalcedHeight());
 
     }
 

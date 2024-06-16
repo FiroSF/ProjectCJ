@@ -56,8 +56,8 @@ public class JHelloWorldBlock extends JNormalBlockBase {
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = new Vector<>();
-        int[] xs = { 0, getWidth(), getWidth(), 0 };
-        int[] ys = { 0, 0, getHeight(), getHeight() };
+        int[] xs = { 0, getCalcedWidth(), getCalcedWidth(), 0 };
+        int[] ys = { 0, 0, getCalcedHeight(), getCalcedHeight() };
         v.add(new BlockPolygon(this, xs, ys));
 
         texts.addElement(new BlockText(this, hw, 10, 0, Color.WHITE));
