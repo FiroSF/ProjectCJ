@@ -3,6 +3,23 @@
 - Implement compiler and executor
 - Implement NormalScopeBlock
 
+- repair constructor (x, y)
+  - JFunctionRunnerBlockBase and JParameterBlockBase
+  - Location should not be set at constructor.
+
+- Change parameter count
+- Change innertext
+- is posx posy necessary?
+
+## Reminder
+- DO NOT MODIFY additionalWidth and additionalHeight MANUALLY
+  - modify this by resizing bolygons and calling updateSize()
+
+
+## Issue
+
+- movePropagation handles JNormalBlock's movement, but other blocks are not
+
 ## Reference
 
 - Event handling
@@ -16,3 +33,6 @@
   - https://stackoverflow.com/a/49971887  
 - Writer
   - https://stackoverflow.com/a/12945678
+
+- https://stackoverflow.com/a/258499
+- https://stackoverflow.com/a/13511696/24828578

@@ -18,7 +18,7 @@ import projectcj.swing.coding.block.special.JParameter;
  */
 public class JWrite extends JFunctionRunnerBlockBase {
     public JWrite(Display display) {
-        super(display, new Color(0xFFC200), "Write", 1, 500, 0);
+        super(display, new Color(0xFFC200), "Write", 1);
     }
 
     @Override

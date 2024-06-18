@@ -17,12 +17,17 @@ import java.util.Vector;
 
 /**
  * Base of blocks.
+ * 
  */
 public abstract class JBlockBase extends JPanel {
-    // 1 = JNormalBlock, 2 = JScopeBlock
+    // 1 = JNormalBlock, 2 = JScopeBlock, 3 = JNormalScopeBlock
+    // See GluePoiunt's consts
     protected int TYPE = 0;
-    public int DEFAULT_WIDTH = 40;
+    public int DEFAULT_WIDTH = 20;
+    public int MINIMUM_WIDTH = 60;
     public int DEFAULT_HEIGHT = 40;
+    protected int additionalWidth = 0;
+    protected int additionalHeight = 0;
 
     // ID
     static int idReservation = 0;
@@ -45,12 +50,9 @@ public abstract class JBlockBase extends JPanel {
     protected Vector<BlockText> texts = new Vector<>();
     protected Vector<GluePoint> gluePoints = new Vector<>();
 
+    // Records mouse's pos, and calc if there is gluepoint
     public int posx;
     public int posy;
-
-    protected int additionalWidth = 0;
-    protected int additionalHeight = 0;
-
     // For mouse move
     public int xoffset;
     public int yoffset;
@@ -70,6 +72,8 @@ public abstract class JBlockBase extends JPanel {
 
         this.display = display;
         this.color = color;
+
+        texts.add(new BlockText(this, "", 10, additionalHeight / 2));
 
         beforeGenerate();
         // BlockMouseAdapter mouseAdapter = new BlockMouseAdapter(this);
@@ -124,6 +128,11 @@ public abstract class JBlockBase extends JPanel {
     }
 
     public int getCalcedWidth() {
+        return Math.max(MINIMUM_WIDTH, DEFAULT_WIDTH + additionalWidth);
+        // return DEFAULT_WIDTH + additionalWidth;
+    }
+
+    public int getTrueWidth() {
         return DEFAULT_WIDTH + additionalWidth;
     }
 
@@ -132,7 +141,7 @@ public abstract class JBlockBase extends JPanel {
     }
 
     public void setWidth(int w) {
-        additionalWidth = w - DEFAULT_HEIGHT;
+        additionalWidth = w - DEFAULT_WIDTH;
     }
 
     public void setHeight(int h) {
@@ -141,6 +150,9 @@ public abstract class JBlockBase extends JPanel {
 
     /**
      * When params are updated, width of block should be changed
+     * 
+     * <p>
+     * This method is called by calling updateSize.
      * 
      * @param dw
      */
@@ -156,6 +168,9 @@ public abstract class JBlockBase extends JPanel {
     /**
      * When params are updated, height of block should be changed
      * 
+     * <p>
+     * This method is called by calling updateSize.
+     * 
      * @param dh
      */
     private void updateHeight(int dh) {
@@ -166,9 +181,7 @@ public abstract class JBlockBase extends JPanel {
     }
 
     /**
-     * When polygons are update, block's size should be updated
-     * 
-     * @param dh
+     * When polygons are updated, block's size should be updated
      */
     public void updateSize() {
         // When polygons are not loaded
@@ -195,6 +208,8 @@ public abstract class JBlockBase extends JPanel {
         if (additionalHeight != newdh) {
             updateHeight(newdh - additionalHeight);
         }
+
+        setPreferredSize(new Dimension(getCalcedWidth(), getCalcedHeight()));
     }
 
     /**
@@ -245,4 +260,26 @@ public abstract class JBlockBase extends JPanel {
 
     }
 
+    public BlockText getInnerText() {
+        return texts.get(0);
+    }
+
+    /**
+     * Sets inner text.
+     * 
+     * <p>
+     * When set inner text, shape of block shoule be transformed.
+     * 
+     * @param innerText
+     */
+    public abstract int setInnerText(String innerText);
+
+    /**
+     * When object is moved by upper blocks, this method moves object properly.
+     * 
+     * @param pos
+     * 
+     * @return Moved height
+     */
+    abstract public int movePropagation(Point pos);
 }

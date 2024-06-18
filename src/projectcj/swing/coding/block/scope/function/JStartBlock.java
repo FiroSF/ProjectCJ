@@ -13,21 +13,23 @@ public class JStartBlock extends JScopeBlock {
     public JStartBlock(Display display) {
         super(display);
 
-        // Default pos
-        posx = 0;
-        posy = 300;
+        // // Default pos
+        // posx = 0;
+        // posy = 300;
         additionalWidth = 160;
         additionalHeight = 60;
         setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
         setLocation(posx, posy);
 
-        texts.addElement(new BlockText(this, "Start", 40, 0, Color.WHITE));
+        // texts.addElement(new BlockText(this, "Start", 40, 0, Color.WHITE));
         polygons = makePolygon();
 
+        setInnerText("Start");
     }
 
     @Override
     public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
         return (T) new StartBlock(scope);
     }
+
 }

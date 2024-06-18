@@ -43,7 +43,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
         if (this instanceof JLValue) {
             TYPE |= GluePoint.LVALUE_BLOCK_TYPE;
             additionalWidth += 10;
-            X_OFFSET += 10;
+            // X_OFFSET += 10;
         }
 
         if (this instanceof JRValue) {
@@ -70,13 +70,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
         return display.getGlueObject(this, pos);
     }
 
-    /**
-     * When object is moved by upper blocks, this method moves object properly.
-     * 
-     * @param pos
-     * 
-     * @return Moved height
-     */
+    @Override
     public int movePropagation(Point pos) {
         // System.out.printf("ID: %d\n", blockID);
         setLocation(pos);
@@ -239,7 +233,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
             // If there is another block already
             if (targetParam.innerBlock != null) {
                 JNormalBlockBase tmp = (JNormalBlockBase) targetParam.innerBlock;
-                System.out.println(111);
+                // System.out.println(111);
 
                 // Move original block
                 Point newP = targetParamGluePoint.getPoint();
@@ -247,7 +241,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
                 tmp.disconnect(newP);
             }
 
-            System.out.println(222);
+            // System.out.println(222);
             // Move scope to target block's scope
             targetParam.innerBlock = (JRValue) this;
             this.upperParameter = targetParam;
@@ -255,12 +249,13 @@ public abstract class JNormalBlockBase extends JBlockBase {
             // Resize upper scope
             anotherBlock.changeParameterSize(targetParam.index, movWidth, movHeight);
 
-            // After resize, upper scope's lower blocks should be moved
-            JParameterBlockBase now = anotherBlock;
-            while (now.upperParameter != null) {
-                now = now.upperParameter.outerBlock;
-            }
-            now.movePropagation(now.getLocation());
+            // After resize, upper scope's lower blocks should be moved -> implemented at
+            // changeParameterSize
+            // JParameterBlockBase now = anotherBlock;
+            // while (now.upperParameter != null) {
+            // now = now.upperParameter.outerBlock;
+            // }
+            // now.movePropagation(now.getLocation());
         }
     }
 
@@ -282,6 +277,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
 
         // Make block polygon
         int w = getCalcedWidth(), h = getCalcedHeight();
+        // System.out.println(additionalWidth);
         int[] xs = { 0, w, w, 0 };
         int[] ys = { 0, 0, h, h };
 
@@ -300,6 +296,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
         }
 
         v.add(new BlockPolygon(this, xs, ys, color));
+        v.get(0).stretchHorizontaly(-MINIMUM_WIDTH + 20 + X_OFFSET);
         return v;
     }
 
@@ -313,17 +310,15 @@ public abstract class JNormalBlockBase extends JBlockBase {
     public void handleMove(MouseEvent e) {
         Point pos = new Point(posx, posy);
 
+        // Disconnect first
+        disconnect(pos);
+
         GluePoint targetGluePoint = getTargetGlueObject(pos);
         // When there is glue point around this block
         if (targetGluePoint != null) {
             connectTo(targetGluePoint);
             return;
         }
-
-        // No glue point
-        disconnect(pos);
-
-        // repaint();
     }
 
     @Override
@@ -337,5 +332,20 @@ public abstract class JNormalBlockBase extends JBlockBase {
             now = now.lowerBlock;
             now.changeZIndex(0);
         }
+    }
+
+    @Override
+    public int setInnerText(String innerText) {
+        int originalWidth = getInnerText().getWidth();
+        getInnerText().setText(innerText);
+
+        int dx = getInnerText().getWidth() - originalWidth;
+        // System.out.println(dx);
+
+        // Stratch body
+        polygons.get(0).stretchHorizontaly(Math.max(0, getTrueWidth() - getCalcedWidth() + dx));
+
+        updateSize();
+        return dx;
     }
 }

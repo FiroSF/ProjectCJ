@@ -48,6 +48,15 @@ public class GluePoint {
         return realPoint;
     }
 
+    /**
+     * Get real point, which represents offset
+     * 
+     * @return Point object
+     */
+    public Point getOffset() {
+        return new Point(point);
+    }
+
     public GluePoint(JBlockBase parent, int x, int y, int type) {
         this(parent, new Point(x, y), type);
     }

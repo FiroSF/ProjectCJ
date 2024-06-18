@@ -3,12 +3,14 @@ package projectcj.swing.coding.block.special;
 import java.awt.Color;
 import java.awt.Font;
 
+import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
 
 public class BlockText {
     String text = "";
+    int width;
     JBlockBase parent = null;
-    Color color = Color.BLACK;
+    Color color = Color.WHITE;
     Font font = new Font("Pretendard", Font.BOLD, 30);
 
     int x = 0;
@@ -54,11 +56,24 @@ public class BlockText {
     public BlockText(JBlockBase parent, String text, int x, int y) {
         this.x = x;
         this.y = y;
-        this.text = text;
         this.parent = parent;
+        setText(text);
+    }
+
+    public void setText(String text) {
+        this.text = text;
+
+        Display.c.getGraphics().setFont(font);
+        // https://stackoverflow.com/a/258499
+        width = Display.c.getGraphics().getFontMetrics(font).stringWidth(text);
     }
 
     public String getText() {
         return text;
     }
+
+    public int getWidth() {
+        return width;
+    }
+
 }

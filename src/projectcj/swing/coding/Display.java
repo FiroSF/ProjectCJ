@@ -8,12 +8,15 @@ import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.JParameterBlockBase;
 import projectcj.swing.coding.block.builtin.io.JRead;
 import projectcj.swing.coding.block.builtin.io.JWrite;
+import projectcj.swing.coding.block.builtin.keyword.JIf;
 import projectcj.swing.coding.block.scope.function.JStartBlock;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.special.JParameter;
 import projectcj.swing.coding.block.testblocks.JBlankBlock;
 import projectcj.swing.coding.block.testblocks.JBlankParamBlock;
+import projectcj.swing.coding.block.testblocks.JBlankScopeBlock;
 import projectcj.swing.coding.block.testblocks.JHelloWorldBlock;
+import projectcj.swing.coding.otherui.JBlockSelection;
 import projectcj.swing.coding.otherui.JConsole;
 
 import java.awt.*;
@@ -22,9 +25,10 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class Display extends JFrame {
-    private Container c;
+    public static Container c;
     public Container blockContainer;
-    private Container console;
+    private JConsole console;
+    private JBlockSelection blockSelection;
 
     // Mouse click event variables
     public boolean isClicked = false;
@@ -55,6 +59,7 @@ public class Display extends JFrame {
         blockContainer.setLayout(null);
 
         console = new JConsole(this);
+        blockSelection = new JBlockSelection(this);
 
         // Records mouse pos
         blockContainer.addMouseMotionListener(new DisplayMouseAdapter(this));
@@ -62,18 +67,42 @@ public class Display extends JFrame {
         // Find clicks, and send to proper block
         blockContainer.addMouseListener(new DisplayMouseAdapter(this));
 
+        setSize(1600, 900);
+        setVisible(true);
+
+        repaint();
+        revalidate();
+    }
+
+    public void init() {
+        blockSelection.init();
+
         // For test
         JStartBlock startBlock = new JStartBlock(this);
+        startBlock.movePropagation(new Point(0, 300));
         blocks.add(startBlock);
 
         JRead jread = new JRead(this);
+        jread.movePropagation(new Point(500, 0));
         blocks.add(jread);
 
         JWrite jwrite = new JWrite(this);
+        jwrite.movePropagation(new Point(300, 0));
         blocks.add(jwrite);
+
+        // JIf jif = new JIf(this, new Color(0x30455D));
+        // jwrite.movePropagation(new Point(400, 0));
+        // blocks.add(jif);
+
+        for (int i = 0; i < 5; i++) {
+            JIf asdf = new JIf(this);
+            asdf.movePropagation(new Point(100, 500 + 100 * i));
+            blocks.add(asdf);
+        }
 
         for (int i = 0; i < 5; i++) {
             JHelloWorldBlock helloWorldBlock = new JHelloWorldBlock(this, "Hello world!" + i);
+            helloWorldBlock.movePropagation(new Point(50, 500));
             blocks.add(helloWorldBlock);
         }
 
@@ -90,8 +119,7 @@ public class Display extends JFrame {
 
         c.add(blockContainer, BorderLayout.CENTER);
         c.add(console, BorderLayout.EAST);
-        setSize(1280, 720);
-        setVisible(true);
+        c.add(blockSelection, BorderLayout.WEST);
 
         repaint();
         revalidate();

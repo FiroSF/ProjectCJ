@@ -95,4 +95,9 @@ public class BlockPolygon {
 
         return newPolygon;
     }
+
+    public void moveDelta(int dx, int dy) {
+        xOffset += dx;
+        yOffset += dy;
+    }
 }

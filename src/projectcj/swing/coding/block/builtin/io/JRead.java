@@ -13,7 +13,7 @@ import projectcj.swing.coding.block.variable.JRValue;
 public class JRead extends JFunctionRunnerBlockBase implements JRValue {
 
     public JRead(Display display) {
-        super(display, new Color(0xD6546A), "Read", 0, 300, 0);
+        super(display, new Color(0xD6546A), "Read", 0);
     }
 
     @Override

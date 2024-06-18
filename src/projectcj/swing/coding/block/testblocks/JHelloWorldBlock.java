@@ -12,7 +12,7 @@ import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.BlockText;
 
 public class JHelloWorldBlock extends JNormalBlockBase {
-    public String hw = "Hello world!";
+    public String hw;
 
     public JHelloWorldBlock(Display display, String text) {
         super(display, new Color(0xFFC200));
@@ -20,15 +20,15 @@ public class JHelloWorldBlock extends JNormalBlockBase {
 
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
+        setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
 
         // Default pos
-        posx = 50;
-        posy = 500;
+        // posx = 50;
+        // posy = 500;
         polygons = makePolygon();
 
-        setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
-        setLocation(posx, posy);
-
+        setInnerText(hw);
+        // setLocation(posx, posy);
     }
 
     @Override
@@ -39,18 +39,7 @@ public class JHelloWorldBlock extends JNormalBlockBase {
     }
 
     public JHelloWorldBlock(Display display) {
-        super(display, new Color(0xFFC200));
-
-        setWidth(DEFAULT_WIDTH);
-        setHeight(DEFAULT_HEIGHT);
-
-        // Default pos
-        posx = 50;
-        posy = 500;
-        polygons = makePolygon();
-
-        setSize(DEFAULT_WIDTH + additionalWidth, DEFAULT_HEIGHT + additionalHeight);
-        setLocation(posx, posy);
+        this(display, "Hello world!");
     }
 
     @Override
@@ -60,7 +49,7 @@ public class JHelloWorldBlock extends JNormalBlockBase {
         int[] ys = { 0, 0, getCalcedHeight(), getCalcedHeight() };
         v.add(new BlockPolygon(this, xs, ys));
 
-        texts.addElement(new BlockText(this, hw, 10, 0, Color.WHITE));
+        // texts.addElement(new BlockText(this, hw, 10, 0, Color.WHITE));
 
         return v;
     }

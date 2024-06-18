@@ -5,7 +5,7 @@ import projectcj.swing.coding.block.variable.JRValue;
 
 public class JParameter {
     // Default width and height
-    public static int DEFAULT_WIDTH = 80;
+    public static int DEFAULT_WIDTH = 60;
     public static int DEFAULT_HEIGHT = 40;
 
     public JRValue innerBlock = null;
