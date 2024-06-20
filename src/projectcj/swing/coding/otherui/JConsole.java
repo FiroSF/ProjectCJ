@@ -83,7 +83,7 @@ public class JConsole extends JPanel {
      */
     public void compile() {
         System.out.println("Compiling...");
-        executor = compiler.compile(display.blocks);
+        executor = compiler.compile(display.blockContainer.getComponents());
         System.out.println("Compiled");
     }
 

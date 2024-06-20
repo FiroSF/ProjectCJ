@@ -7,6 +7,7 @@ import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.core.coding.block.testblocks.HelloWorldBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.BlockText;
@@ -57,5 +58,10 @@ public class JHelloWorldBlock extends JNormalBlockBase {
     @Override
     public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
         return (T) new HelloWorldBlock(scope, hw);
+    }
+
+    @Override
+    protected JBlockBase instantiateMe() {
+        return new JHelloWorldBlock(display, hw);
     }
 }

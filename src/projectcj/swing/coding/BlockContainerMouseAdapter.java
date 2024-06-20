@@ -10,10 +10,10 @@ import projectcj.swing.coding.block.special.JParameter;
 import java.awt.*;
 import java.awt.event.*;
 
-public class DisplayMouseAdapter extends MouseAdapter {
+public class BlockContainerMouseAdapter extends MouseAdapter {
     Display display;
 
-    public DisplayMouseAdapter(Display display) {
+    public BlockContainerMouseAdapter(Display display) {
         this.display = display;
     }
 
@@ -47,7 +47,11 @@ public class DisplayMouseAdapter extends MouseAdapter {
         System.out.println("Clicked...");
 
         // While iterating all of component's polygons, find appropriate block.
-        for (JBlockBase block : display.blocks) {
+        for (Component obj : display.blockContainer.getComponents()) {
+            if (!(obj instanceof JBlockBase))
+                continue;
+            JBlockBase block = (JBlockBase) obj;
+
             Point mousePoint = new Point(e.getX() - block.posx, e.getY() - block.posy);
 
             for (BlockPolygon bolygon : block.polygons) {
@@ -81,5 +85,7 @@ public class DisplayMouseAdapter extends MouseAdapter {
         display.isClicked = false;
         display.clickedBlock.posx = display.clickedBlock.getX();
         display.clickedBlock.posy = display.clickedBlock.getY();
+
+        display.clickedBlock.releaseMouse();
     }
 }

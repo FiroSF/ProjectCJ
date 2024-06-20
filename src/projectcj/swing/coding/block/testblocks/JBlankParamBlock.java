@@ -6,6 +6,7 @@ import java.util.Vector;
 import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JFunctionRunnerBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.special.BlockPolygon;
@@ -36,5 +37,10 @@ public class JBlankParamBlock extends JFunctionRunnerBlockBase implements JRValu
     @Override
     public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
         return null;
+    }
+
+    @Override
+    protected JBlockBase instantiateMe() {
+        return new JBlankParamBlock(display, posx, posy, 0, 0);
     }
 }

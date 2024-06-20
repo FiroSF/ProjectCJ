@@ -4,7 +4,9 @@ import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.core.coding.block.scope.function.StartBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.special.BlockText;
+import projectcj.swing.coding.block.testblocks.JBlankBlock;
 
 import java.awt.*;
 
@@ -32,4 +34,8 @@ public class JStartBlock extends JScopeBlock {
         return (T) new StartBlock(scope);
     }
 
+    @Override
+    protected JBlockBase instantiateMe() {
+        return new JStartBlock(display);
+    }
 }

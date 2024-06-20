@@ -6,6 +6,7 @@ import java.util.Vector;
 import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.scope.JParameterScopeBlock;
 
 public class JBlankScopeBlock extends JParameterScopeBlock {
@@ -33,5 +34,10 @@ public class JBlankScopeBlock extends JParameterScopeBlock {
     @Override
     public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
         return null;
+    }
+
+    @Override
+    protected JBlockBase instantiateMe() {
+        return new JBlankScopeBlock(display);
     }
 }

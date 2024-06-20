@@ -25,16 +25,27 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class Display extends JFrame {
-    public static Container c;
-    public Container blockContainer;
+    // Container which includes main container, overlay container, block container
+    public Container upperc;
+
+    // Main container, includes console and blockSelection.
+    public static JPanel c;
+
+    // Overlay container, when block is being moved by user, blocks are in here.
+    public JLayeredPane overlayContainer;
+
+    // Block container
+    public JLayeredPane blockContainer;
+
     private JConsole console;
     private JBlockSelection blockSelection;
 
     // Mouse click event variables
+    public BlockContainerMouseAdapter mouseAdapter;
     public boolean isClicked = false;
     public JBlockBase clickedBlock = null;
 
-    public ArrayList<JBlockBase> blocks = new ArrayList<>();
+    // public ArrayList<JBlockBase> blocks = new ArrayList<>();
 
     int mouseX = 0;
     int mouseY = 0;
@@ -51,21 +62,44 @@ public class Display extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // setContentPane(new JLayeredPane());
-        c = getContentPane();
-        // c.setLayout(new BorderLayout());
+        upperc = getContentPane();
+        upperc.setLayout(null);
 
+        c = new JPanel();
+        c.setLayout(new BorderLayout());
+
+        // Because layout manager is null, specify size manually.
+        // https://stackoverflow.com/a/8792423/24828578
+        c.setBounds(0, 0, 1600, 800);
+        c.setBackground(Color.WHITE);
+        c.setOpaque(false);
+
+        // Init overlay container
+        overlayContainer = new JLayeredPane();
+        overlayContainer.setBounds(0, 0, 1600, 800);
+        overlayContainer.setOpaque(false);
+
+        // Init blockContainer
         // https://stackoverflow.com/a/18155818/24828578
         blockContainer = new JLayeredPane();
         blockContainer.setLayout(null);
+        blockContainer.setBounds(0, 0, 1600, 800);
+
+        // Event
+        mouseAdapter = new BlockContainerMouseAdapter(this);
+
+        // Records mouse pos
+        blockContainer.addMouseMotionListener(mouseAdapter);
+
+        // Find clicks, and send to proper block
+        blockContainer.addMouseListener(mouseAdapter);
+
+        upperc.add(blockContainer, 0);
+        upperc.add(c, 0);
+        upperc.add(overlayContainer, 0);
 
         console = new JConsole(this);
         blockSelection = new JBlockSelection(this);
-
-        // Records mouse pos
-        blockContainer.addMouseMotionListener(new DisplayMouseAdapter(this));
-
-        // Find clicks, and send to proper block
-        blockContainer.addMouseListener(new DisplayMouseAdapter(this));
 
         setSize(1600, 900);
         setVisible(true);
@@ -78,6 +112,8 @@ public class Display extends JFrame {
         blockSelection.init();
 
         // For test
+        ArrayList<JBlockBase> blocks = new ArrayList<>();
+
         JStartBlock startBlock = new JStartBlock(this);
         startBlock.movePropagation(new Point(0, 300));
         blocks.add(startBlock);
@@ -89,10 +125,6 @@ public class Display extends JFrame {
         JWrite jwrite = new JWrite(this);
         jwrite.movePropagation(new Point(300, 0));
         blocks.add(jwrite);
-
-        // JIf jif = new JIf(this, new Color(0x30455D));
-        // jwrite.movePropagation(new Point(400, 0));
-        // blocks.add(jif);
 
         for (int i = 0; i < 5; i++) {
             JIf asdf = new JIf(this);
@@ -117,9 +149,9 @@ public class Display extends JFrame {
             blockContainer.add(blk, -1);
         }
 
-        c.add(blockContainer, BorderLayout.CENTER);
-        c.add(console, BorderLayout.EAST);
-        c.add(blockSelection, BorderLayout.WEST);
+        // c.add(blockContainer, BorderLayout.CENTER, 0);
+        c.add(console, BorderLayout.EAST, -1);
+        c.add(blockSelection, BorderLayout.WEST, -1);
 
         repaint();
         revalidate();
@@ -153,7 +185,11 @@ public class Display extends JFrame {
         // System.out.printf("My: %d, %d : %d\n", (int) mePoint.getX(), (int)
         // mePoint.getY(), me.getType());
 
-        for (JBlockBase block : blocks) {
+        for (Component obj : blockContainer.getComponents()) {
+            if (!(obj instanceof JBlockBase))
+                continue;
+            JBlockBase block = (JBlockBase) obj;
+
             if (me == block)
                 continue;
 

@@ -19,7 +19,7 @@ import java.util.Vector;
  * Base of blocks.
  * 
  */
-public abstract class JBlockBase extends JPanel {
+public abstract class JBlockBase extends JPanel implements Cloneable {
     // 1 = JNormalBlock, 2 = JScopeBlock, 3 = JNormalScopeBlock
     // See GluePoiunt's consts
     protected int TYPE = 0;
@@ -209,6 +209,7 @@ public abstract class JBlockBase extends JPanel {
             updateHeight(newdh - additionalHeight);
         }
 
+        // https://stackoverflow.com/a/5921210/24828578
         setPreferredSize(new Dimension(getCalcedWidth(), getCalcedHeight()));
     }
 
@@ -240,7 +241,12 @@ public abstract class JBlockBase extends JPanel {
      * @param index
      */
     public void changeZIndex(int index) {
-        display.blockContainer.setComponentZOrder(this, 0);
+        if (this.getParent() == display.blockContainer)
+            display.blockContainer.remove(this);
+        if (this.getParent() != display.overlayContainer)
+            display.overlayContainer.add(this);
+
+        display.overlayContainer.setComponentZOrder(this, 0);
 
         // Manage inner block's zindex
         if (this instanceof JScopableBlock) {
@@ -251,6 +257,27 @@ public abstract class JBlockBase extends JPanel {
             }
         }
 
+    }
+
+    /**
+     * When release mouse, blocks should be moved into blockContainer.
+     */
+    public void releaseMouse() {
+        if (this.getParent() == display.overlayContainer)
+            display.overlayContainer.remove(this);
+        if (this.getParent() != display.blockContainer)
+            display.blockContainer.add(this);
+
+        display.blockContainer.setComponentZOrder(this, 0);
+
+        // Manage inner block's zindex
+        if (this instanceof JScopableBlock) {
+            JNormalBlockBase now = ((JScopableBlock) this).getInnerBlock();
+            while (now != null) {
+                now.releaseMouse();
+                now = now.lowerBlock;
+            }
+        }
     }
 
     /**
@@ -282,4 +309,31 @@ public abstract class JBlockBase extends JPanel {
      * @return Moved height
      */
     abstract public int movePropagation(Point pos);
+
+    /**
+     * Make copy of block
+     * 
+     * @return Copy of block itself
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        JBlockBase me = instantiateMe();
+
+        // Manage inner block
+        if (me instanceof JScopableBlock) {
+            JNormalBlockBase now = ((JScopableBlock) me).getInnerBlock();
+            if (now != null) {
+                ((JScopableBlock) me).setInnerBlock((JNormalBlockBase) now.clone());
+            }
+        }
+
+        return me;
+    }
+
+    /**
+     * Make copy of block, but only me. not lowerblocks or innerblocks, etc.
+     * 
+     * @return Copy of block itself
+     */
+    abstract protected JBlockBase instantiateMe();
 }

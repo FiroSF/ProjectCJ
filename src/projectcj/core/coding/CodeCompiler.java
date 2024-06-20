@@ -1,5 +1,6 @@
 package projectcj.core.coding;
 
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
@@ -27,15 +28,20 @@ public class CodeCompiler {
     /**
      * Compile all code.
      * 
-     * @param blocks List of swing blocks.
+     * @param blocks
+     *            List of swing blocks.
      * @return Executor object
      */
-    public CodeExecutor compile(ArrayList<JBlockBase> blocks) {
+    public CodeExecutor compile(Component[] blocks) {
         CodeExecutor executor = new CodeExecutor(ins, outs);
         StartBlock startBlock;
 
         // Find only functions
-        for (JBlockBase block : blocks) {
+        for (Component obj : blocks) {
+            if (!(obj instanceof JBlockBase))
+                continue;
+            JBlockBase block = (JBlockBase) obj;
+
             if (block instanceof JScopeBlock) {
                 ScopeBlock scopeBlock = compileFunction(executor, (JScopeBlock) block);
 
@@ -53,7 +59,8 @@ public class CodeCompiler {
     /**
      * Compiles single function.
      * 
-     * @param jScopeBlock Function swing object
+     * @param jScopeBlock
+     *            Function swing object
      * @return Function core object
      */
     public ScopeBlock compileFunction(CodeExecutor executor, JScopeBlock jScopeBlock) {

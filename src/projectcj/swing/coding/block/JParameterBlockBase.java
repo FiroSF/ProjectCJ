@@ -6,11 +6,13 @@ import java.util.Vector;
 import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.BlockText;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.special.JParameter;
 import projectcj.swing.coding.block.special.ParameterGluePoint;
+import projectcj.swing.coding.block.variable.JRValue;
 
 public abstract class JParameterBlockBase extends JNormalBlockBase {
     // When parameter is updated, other parameters' pos may should be modified.
@@ -98,6 +100,34 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
                 ((JNormalBlockBase) param.innerBlock).changeZIndex(0);
             }
         }
+    }
+
+    @Override
+    public void releaseMouse() {
+        super.releaseMouse();
+
+        // Manage parameter block's zindex
+        JParameterBlockBase now = this;
+        for (JParameter param : now.parameters) {
+            if (param.innerBlock != null) {
+                ((JNormalBlockBase) param.innerBlock).releaseMouse();
+            }
+        }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        JParameterBlockBase me = (JParameterBlockBase) super.clone();
+
+        // Clone parameter blocks
+        JParameterBlockBase now = this;
+        for (int i = 0; i < now.parameters.size(); i++) {
+            if (now.parameters.get(i).innerBlock != null) {
+                me.parameters.get(i).innerBlock = (JRValue) ((JBlockBase) now.parameters.get(i).innerBlock).clone();
+            }
+        }
+
+        return me;
     }
 
     /**

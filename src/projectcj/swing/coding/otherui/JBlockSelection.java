@@ -7,6 +7,7 @@ import projectcj.core.coding.CodeCompiler;
 import projectcj.core.coding.CodeExecutor;
 import projectcj.core.coding.ConsoleReader;
 import projectcj.core.coding.ConsoleWriter;
+import projectcj.swing.coding.BlockContainerMouseAdapter;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.builtin.io.JRead;
@@ -22,6 +23,8 @@ import java.util.Vector;
 
 public class JBlockSelection extends JPanel {
     Display display;
+    JBlockBase blks[];
+    BlockSelectionMouseAdapter mouseAdapter;
 
     JLayeredPane blocks = new JLayeredPane();
     JPanel blockPanel = new JPanel();
@@ -33,6 +36,11 @@ public class JBlockSelection extends JPanel {
 
         setLayout(new BorderLayout(5, 5));
         setBackground(Color.WHITE);
+
+        // Event
+        mouseAdapter = new BlockSelectionMouseAdapter(this);
+        tab.addMouseMotionListener(mouseAdapter);
+        tab.addMouseListener(mouseAdapter);
 
         // https://stackoverflow.com/a/13511696/24828578
         blocks.setLayout(new BoxLayout(blocks, BoxLayout.Y_AXIS));
@@ -48,7 +56,7 @@ public class JBlockSelection extends JPanel {
     }
 
     public void init() {
-        JBlockBase blks[] = {
+        blks = new JBlockBase[] {
                 new JRead(display),
                 new JWrite(display),
                 new JIf(display),

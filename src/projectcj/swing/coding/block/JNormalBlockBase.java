@@ -335,6 +335,19 @@ public abstract class JNormalBlockBase extends JBlockBase {
     }
 
     @Override
+    public void releaseMouse() {
+        super.releaseMouse();
+
+        // Manage lower block's zindex
+        JNormalBlockBase now = this;
+
+        if (now.lowerBlock != null) {
+            now = now.lowerBlock;
+            now.releaseMouse();
+        }
+    }
+
+    @Override
     public int setInnerText(String innerText) {
         int originalWidth = getInnerText().getWidth();
         getInnerText().setText(innerText);
@@ -347,5 +360,17 @@ public abstract class JNormalBlockBase extends JBlockBase {
 
         updateSize();
         return dx;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        JNormalBlockBase me = (JNormalBlockBase) super.clone();
+
+        // Clone lower blocks
+        if (this.lowerBlock != null) {
+            me.lowerBlock = (JNormalBlockBase) this.lowerBlock.clone();
+        }
+
+        return me;
     }
 }

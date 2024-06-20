@@ -5,6 +5,7 @@ import java.util.Vector;
 import projectcj.core.coding.block.BlockBase;
 import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
+import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JFunctionRunnerBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.special.BlockPolygon;
@@ -22,4 +23,8 @@ public class JRead extends JFunctionRunnerBlockBase implements JRValue {
         throw new UnsupportedOperationException("Unimplemented method 'getCoreClassObj'");
     }
 
+    @Override
+    protected JBlockBase instantiateMe() {
+        return new JRead(display);
+    }
 }
