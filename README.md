@@ -10,6 +10,7 @@
 - Change parameter count
 - Change innertext
 - is posx posy necessary?
+- show x and y at gui
 
 ## Reminder
 - DO NOT MODIFY additionalWidth and additionalHeight MANUALLY

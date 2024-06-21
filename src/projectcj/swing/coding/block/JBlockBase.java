@@ -50,10 +50,11 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     protected Vector<BlockText> texts = new Vector<>();
     protected Vector<GluePoint> gluePoints = new Vector<>();
 
-    // Records mouse's pos, and calc if there is gluepoint
+    // Records block's absolute pos, and calc if there is gluepoint
     public int posx;
     public int posy;
-    // For mouse move
+
+    // Relative pos of mouse, when clicked
     public int xoffset;
     public int yoffset;
 

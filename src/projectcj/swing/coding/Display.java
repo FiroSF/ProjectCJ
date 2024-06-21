@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class Display extends JFrame {
+    public static final int SIZE = 10000;
+
     // Container which includes main container, overlay container, block container
-    public Container upperc;
+    public JPanel upperc;
 
     // Main container, includes console and blockSelection.
     public static JPanel c;
@@ -37,13 +39,24 @@ public class Display extends JFrame {
     // Block container
     public JLayeredPane blockContainer;
 
+    // Just BG, setting blockContainer's background makes weird so i made this
+    public JPanel bg;
+
     private JConsole console;
-    private JBlockSelection blockSelection;
+    public JBlockSelection blockSelection;
 
     // Mouse click event variables
     public BlockContainerMouseAdapter mouseAdapter;
     public boolean isClicked = false;
     public JBlockBase clickedBlock = null;
+
+    // Position of block screen
+    public int posx;
+    public int posy;
+
+    // Relative pos of mouse, when clicked
+    public int xoffset;
+    public int yoffset;
 
     // public ArrayList<JBlockBase> blocks = new ArrayList<>();
 
@@ -61,9 +74,12 @@ public class Display extends JFrame {
     public Display() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // setContentPane(new JLayeredPane());
-        upperc = getContentPane();
+        upperc = new JPanel();
+        setContentPane(upperc);
+
         upperc.setLayout(null);
+        upperc.setOpaque(false);
+        upperc.setBackground(Color.BLACK);
 
         c = new JPanel();
         c.setLayout(new BorderLayout());
@@ -71,19 +87,26 @@ public class Display extends JFrame {
         // Because layout manager is null, specify size manually.
         // https://stackoverflow.com/a/8792423/24828578
         c.setBounds(0, 0, 1600, 800);
-        c.setBackground(Color.WHITE);
         c.setOpaque(false);
+
+        posx = -SIZE / 2;
+        posy = -SIZE / 2;
 
         // Init overlay container
         overlayContainer = new JLayeredPane();
-        overlayContainer.setBounds(0, 0, 1600, 800);
+        overlayContainer.setBounds(posx, posy, SIZE, SIZE);
         overlayContainer.setOpaque(false);
 
         // Init blockContainer
         // https://stackoverflow.com/a/18155818/24828578
         blockContainer = new JLayeredPane();
         blockContainer.setLayout(null);
-        blockContainer.setBounds(0, 0, 1600, 800);
+        blockContainer.setBounds(posx, posy, SIZE, SIZE);
+
+        // BG
+        bg = new JPanel();
+        bg.setBounds(posx, posy, SIZE, SIZE);
+        bg.setBackground(Color.WHITE);
 
         // Event
         mouseAdapter = new BlockContainerMouseAdapter(this);
@@ -94,6 +117,7 @@ public class Display extends JFrame {
         // Find clicks, and send to proper block
         blockContainer.addMouseListener(mouseAdapter);
 
+        upperc.add(bg, 0);
         upperc.add(blockContainer, 0);
         upperc.add(c, 0);
         upperc.add(overlayContainer, 0);
@@ -111,43 +135,44 @@ public class Display extends JFrame {
     public void init() {
         blockSelection.init();
 
-        // For test
-        ArrayList<JBlockBase> blocks = new ArrayList<>();
+        // // For test
+        // ArrayList<JBlockBase> blocks = new ArrayList<>();
 
-        JStartBlock startBlock = new JStartBlock(this);
-        startBlock.movePropagation(new Point(0, 300));
-        blocks.add(startBlock);
+        // JStartBlock startBlock = new JStartBlock(this);
+        // startBlock.movePropagation(new Point(0, 300));
+        // blocks.add(startBlock);
 
-        JRead jread = new JRead(this);
-        jread.movePropagation(new Point(500, 0));
-        blocks.add(jread);
+        // JRead jread = new JRead(this);
+        // jread.movePropagation(new Point(500, 0));
+        // blocks.add(jread);
 
-        JWrite jwrite = new JWrite(this);
-        jwrite.movePropagation(new Point(300, 0));
-        blocks.add(jwrite);
+        // JWrite jwrite = new JWrite(this);
+        // jwrite.movePropagation(new Point(300, 0));
+        // blocks.add(jwrite);
 
-        for (int i = 0; i < 5; i++) {
-            JIf asdf = new JIf(this);
-            asdf.movePropagation(new Point(100, 500 + 100 * i));
-            blocks.add(asdf);
-        }
+        // for (int i = 0; i < 5; i++) {
+        // JIf asdf = new JIf(this);
+        // asdf.movePropagation(new Point(100, 500 + 100 * i));
+        // blocks.add(asdf);
+        // }
 
-        for (int i = 0; i < 5; i++) {
-            JHelloWorldBlock helloWorldBlock = new JHelloWorldBlock(this, "Hello world!" + i);
-            helloWorldBlock.movePropagation(new Point(50, 500));
-            blocks.add(helloWorldBlock);
-        }
+        // for (int i = 0; i < 5; i++) {
+        // JHelloWorldBlock helloWorldBlock = new JHelloWorldBlock(this, "Hello world!"
+        // + i);
+        // helloWorldBlock.movePropagation(new Point(50, 500));
+        // blocks.add(helloWorldBlock);
+        // }
 
-        for (int i = 0; i < 10; i++) {
-            JBlankParamBlock block = new JBlankParamBlock(this, 120 * i, 60 * i, 100, 50,
-                    new Color(i * 20, i * 20, i * 20));
-            block.polygons.elementAt(0).stretchHorizontaly(i * 20);
-            blocks.add(block);
-        }
+        // for (int i = 0; i < 10; i++) {
+        // JBlankParamBlock block = new JBlankParamBlock(this, 120 * i, 60 * i, 100, 50,
+        // new Color(i * 20, i * 20, i * 20));
+        // block.polygons.elementAt(0).stretchHorizontaly(i * 20);
+        // blocks.add(block);
+        // }
 
-        for (JBlockBase blk : blocks) {
-            blockContainer.add(blk, -1);
-        }
+        // for (JBlockBase blk : blocks) {
+        // blockContainer.add(blk, -1);
+        // }
 
         // c.add(blockContainer, BorderLayout.CENTER, 0);
         c.add(console, BorderLayout.EAST, -1);

@@ -1,5 +1,6 @@
 package projectcj.swing.coding.otherui;
 
+import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.JParameterBlockBase;
@@ -10,25 +11,38 @@ import projectcj.swing.coding.block.special.JParameter;
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.JPanel;
+
 public class BlockSelectionMouseAdapter extends MouseAdapter {
     JBlockSelection blockSelection;
+    JPanel tab;
+    Display display;
 
-    public BlockSelectionMouseAdapter(JBlockSelection blockSelection) {
+    public BlockSelectionMouseAdapter(JBlockSelection blockSelection, JPanel tab) {
         this.blockSelection = blockSelection;
+        this.tab = tab;
+        display = blockSelection.display;
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY());
         blockSelection.display.mouseAdapter.mouseMoved(e);
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        // Don't move screen
+        if (display.clickedBlock == null)
+            return;
+
+        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY());
         blockSelection.display.mouseAdapter.mouseDragged(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY());
         blockSelection.display.mouseAdapter.mouseReleased(e);
     }
 
@@ -41,7 +55,7 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
 
         // While iterating all of component's polygons, find appropriate block.
         for (JBlockBase block : blockSelection.blks) {
-            Point mousePoint = new Point(e.getX() - block.posx, e.getY() - block.posy);
+            Point mousePoint = new Point(e.getX() - block.getX(), e.getY() - block.getY());
 
             for (BlockPolygon bolygon : block.polygons) {
                 Polygon polygon = bolygon.getPolygon();
@@ -52,8 +66,10 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
 
                     try {
                         JBlockBase newBlock = (JBlockBase) block.clone();
-                        newBlock.xoffset = mousePoint.x;
-                        newBlock.yoffset = mousePoint.y;
+                        newBlock.xoffset = mousePoint.x;// - block.getX();
+                        newBlock.yoffset = mousePoint.y;// - block.getY();
+                        // newBlock.xoffset = blockSelection.display.getMouseX() - block.posx;
+                        // newBlock.yoffset = blockSelection.display.getMouseY() - block.posy;
 
                         // Set zindex
                         newBlock.changeZIndex(0);
@@ -72,5 +88,4 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
             }
         }
     }
-
 }

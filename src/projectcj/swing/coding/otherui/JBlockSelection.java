@@ -24,7 +24,7 @@ import java.util.Vector;
 public class JBlockSelection extends JPanel {
     Display display;
     JBlockBase blks[];
-    BlockSelectionMouseAdapter mouseAdapter;
+    // BlockSelectionMouseAdapter mouseAdapter;
 
     JLayeredPane blocks = new JLayeredPane();
     JPanel blockPanel = new JPanel();
@@ -38,9 +38,9 @@ public class JBlockSelection extends JPanel {
         setBackground(Color.WHITE);
 
         // Event
-        mouseAdapter = new BlockSelectionMouseAdapter(this);
-        tab.addMouseMotionListener(mouseAdapter);
-        tab.addMouseListener(mouseAdapter);
+        BlockSelectionMouseAdapter mouseAdapter = new BlockSelectionMouseAdapter(this, blockPanel);
+        blockPanel.addMouseMotionListener(mouseAdapter);
+        blockPanel.addMouseListener(mouseAdapter);
 
         // https://stackoverflow.com/a/13511696/24828578
         blocks.setLayout(new BoxLayout(blocks, BoxLayout.Y_AXIS));
