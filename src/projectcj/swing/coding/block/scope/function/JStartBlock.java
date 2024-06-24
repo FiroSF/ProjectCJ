@@ -1,14 +1,10 @@
 package projectcj.swing.coding.block.scope.function;
 
 import projectcj.core.coding.block.BlockBase;
-import projectcj.core.coding.block.scope.function.ScopeBlock;
+import projectcj.core.coding.block.scope.ScopableBlock;
 import projectcj.core.coding.block.scope.function.StartBlock;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
-import projectcj.swing.coding.block.special.BlockText;
-import projectcj.swing.coding.block.testblocks.JBlankBlock;
-
-import java.awt.*;
 
 public class JStartBlock extends JScopeBlock {
 
@@ -29,8 +25,9 @@ public class JStartBlock extends JScopeBlock {
         setInnerText("Start");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
+    public <T extends BlockBase> T getCoreClassObj(ScopableBlock scope) {
         return (T) new StartBlock(scope);
     }
 

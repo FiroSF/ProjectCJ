@@ -3,14 +3,12 @@ package projectcj.swing.coding.block;
 import javax.swing.*;
 
 import projectcj.core.coding.block.BlockBase;
-import projectcj.core.coding.block.scope.function.ScopeBlock;
+import projectcj.core.coding.block.scope.ScopableBlock;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.BlockText;
 import projectcj.swing.coding.block.special.GluePoint;
-import projectcj.swing.coding.block.special.JParameter;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
@@ -61,8 +59,7 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     /**
      * Constructor
      * 
-     * @param display
-     *            original display
+     * @param display original display
      */
     public JBlockBase(Display display, Color color) {
         setOpaque(false);
@@ -120,8 +117,7 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     /**
      * Get target glue object(where this object should be glued).
      * 
-     * @param pos
-     *            current pos
+     * @param pos current pos
      * @return GluePoint object which refers to glue point
      */
     public GluePoint getTargetGlueObject(Point pos) {
@@ -217,8 +213,7 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     /**
      * This method handles movement
      * 
-     * @param e
-     *            MouseEvent object from mouseDragged event
+     * @param e MouseEvent object from mouseDragged event
      */
     public abstract void handleMove(MouseEvent e);
 
@@ -234,7 +229,8 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
      * 
      * @return proper core class
      */
-    public abstract <T extends BlockBase> T getCoreClassObj(ScopeBlock scope);
+
+    public abstract <T extends BlockBase> T getCoreClassObj(ScopableBlock scope);
 
     /**
      * Change zIndex of block. And propagation.

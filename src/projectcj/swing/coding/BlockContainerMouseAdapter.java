@@ -1,11 +1,7 @@
 package projectcj.swing.coding;
 
 import projectcj.swing.coding.block.JBlockBase;
-import projectcj.swing.coding.block.JNormalBlockBase;
-import projectcj.swing.coding.block.JParameterBlockBase;
-import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
-import projectcj.swing.coding.block.special.JParameter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -71,7 +67,8 @@ public class BlockContainerMouseAdapter extends MouseAdapter {
                 continue;
             JBlockBase block = (JBlockBase) obj;
 
-            Point mousePoint = new Point(display.getMouseX() - block.posx, display.getMouseY() - block.posy);
+            Point mousePoint =
+                    new Point(display.getMouseX() - block.posx, display.getMouseY() - block.posy);
             // System.out.printf("%d, %d\n", mousePoint.x, mousePoint.y);
 
             for (BlockPolygon bolygon : block.polygons) {

@@ -1,10 +1,6 @@
 package projectcj.core.coding;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import projectcj.swing.coding.otherui.JConsole;
 
 /**
  * Custom console writer.
@@ -13,23 +9,15 @@ import projectcj.swing.coding.otherui.JConsole;
  * https://velog.io/@focusonmx/Java-%EB%B9%A0%EB%A5%B8-%EC%9E%85%EC%B6%9C%EB%A0%A5
  */
 public class ConsoleReader extends InputStreamReader {
-    public ConsoleReader(JConsole console) {
-        super(new ConsoleInputStream(console));
+    ConsoleInputStream cis;
+
+    public void supplyData(String s) {
+        cis.supplyData(s);
+    }
+
+    public ConsoleReader(ConsoleInputStream cis) {
+        super(cis);
+        this.cis = cis;
     }
 }
 
-class ConsoleInputStream extends InputStream {
-    JConsole console;
-
-    ConsoleInputStream(JConsole console) {
-        this.console = console;
-    }
-
-    /**
-     * Is read speed is matter?
-     */
-    @Override
-    public int read() throws IOException {
-        return console.read();
-    }
-}

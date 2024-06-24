@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.Vector;
 
 import projectcj.core.coding.block.BlockBase;
-import projectcj.core.coding.block.scope.function.ScopeBlock;
+import projectcj.core.coding.block.scope.ScopableBlock;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
@@ -35,15 +35,15 @@ public class JBlankBlock extends JNormalBlockBase {
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = new Vector<>();
-        int[] xs = { 0, width, width, 0 };
-        int[] ys = { 0, 0, height, height };
+        int[] xs = {0, width, width, 0};
+        int[] ys = {0, 0, height, height};
         v.add(new BlockPolygon(this, xs, ys, color));
 
         return v;
     }
 
     @Override
-    public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
+    public <T extends BlockBase> T getCoreClassObj(ScopableBlock scope) {
         return null;
     }
 

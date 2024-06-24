@@ -16,8 +16,7 @@ import java.util.Vector;
 /**
  * This class represents normal blocks.
  * 
- * Normal block has two points: upper glue point, lower glue point. and Normal
- * blocks are connected
+ * Normal block has two points: upper glue point, lower glue point. and Normal blocks are connected
  * to another blocks, up and down.
  */
 public abstract class JNormalBlockBase extends JBlockBase {
@@ -62,8 +61,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
     /**
      * Get target glue object(where this object should be glued).
      * 
-     * @param pos
-     *            current pos
+     * @param pos current pos
      * @return GluePoint object which refers to glue point
      */
     public GluePoint getTargetGlueObject(Point pos) {
@@ -87,8 +85,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
     /**
      * Disconnects properly.
      * 
-     * @param pos
-     *            Mouse position
+     * @param pos Mouse position
      */
     public void disconnect(Point pos) {
         // If this block has gluepoint object, implementation of this method will be
@@ -136,13 +133,11 @@ public abstract class JNormalBlockBase extends JBlockBase {
     }
 
     /**
-     * When this block is attached to another block, this method connects blocks
-     * properly.
+     * When this block is attached to another block, this method connects blocks properly.
      * 
      * This works like linked list.
      * 
-     * @param targetGluePoint
-     *            Target's glue point object
+     * @param targetGluePoint Target's glue point object
      * 
      */
     public void connectTo(GluePoint targetGluePoint) {
@@ -243,7 +238,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
 
             // System.out.println(222);
             // Move scope to target block's scope
-            targetParam.innerBlock = (JRValue) this;
+            targetParam.innerBlock = this;
             this.upperParameter = targetParam;
 
             // Resize upper scope
@@ -278,20 +273,20 @@ public abstract class JNormalBlockBase extends JBlockBase {
         // Make block polygon
         int w = getCalcedWidth(), h = getCalcedHeight();
         // System.out.println(additionalWidth);
-        int[] xs = { 0, w, w, 0 };
-        int[] ys = { 0, 0, h, h };
+        int[] xs = {0, w, w, 0};
+        int[] ys = {0, 0, h, h};
 
         if (this instanceof JLValue && this instanceof JRValue) {
-            xs = new int[] { 0, w, w, w - 10, w - 10, w, w, 0, 0, 10, 10, 0 };
-            ys = new int[] { 0, 0, 10, 10, h - 10, h - 10, h, h, 10, 10, h - 10, h - 10 };
+            xs = new int[] {0, w, w, w - 10, w - 10, w, w, 0, 0, 10, 10, 0};
+            ys = new int[] {0, 0, 10, 10, h - 10, h - 10, h, h, 10, 10, h - 10, h - 10};
 
         } else if (this instanceof JLValue) {
-            xs = new int[] { 0, w, w, w - 10, w - 10, w, w, 0 };
-            ys = new int[] { 0, 0, 10, 10, h - 10, h - 10, h, h };
+            xs = new int[] {0, w, w, w - 10, w - 10, w, w, 0};
+            ys = new int[] {0, 0, 10, 10, h - 10, h - 10, h, h};
 
         } else if (this instanceof JRValue) {
-            xs = new int[] { 0, w, w, 0, 0, 10, 10, 0 };
-            ys = new int[] { 0, 0, h, h, 10, 10, h - 10, h - 10 };
+            xs = new int[] {0, w, w, 0, 0, 10, 10, 0};
+            ys = new int[] {0, 0, h, h, 10, 10, h - 10, h - 10};
 
         }
 
@@ -303,8 +298,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
     /**
      * This method handles movement
      * 
-     * @param e
-     *            MouseEvent object from mouseDragged event
+     * @param e MouseEvent object from mouseDragged event
      */
     @Override
     public void handleMove(MouseEvent e) {
@@ -356,7 +350,7 @@ public abstract class JNormalBlockBase extends JBlockBase {
         // System.out.println(dx);
 
         // Stratch body
-        polygons.get(0).stretchHorizontaly(Math.max(0, getTrueWidth() - getCalcedWidth() + dx));
+        polygons.get(0).stretchHorizontaly(Math.max(0, getTrueWidth() - getCalcedWidth()) + dx);
 
         updateSize();
         return dx;

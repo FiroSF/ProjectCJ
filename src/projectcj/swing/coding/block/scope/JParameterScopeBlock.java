@@ -1,14 +1,11 @@
 package projectcj.swing.coding.block.scope;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.Vector;
 
 import projectcj.swing.coding.Display;
-import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.JParameterBlockBase;
-import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.special.JParameter;
@@ -36,7 +33,8 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
         polygons.get(1).stretchHorizontaly(PARAM_DIST * paramCount);
 
         // Set default gluePoint (inside of scope)
-        Point pointOfGluePoint = new Point(LINE_DEFAULT_WIDTH, UPPER_DEFAULT_HEIGHT + (paramCount != 0 ? 20 : 0));
+        Point pointOfGluePoint =
+                new Point(LINE_DEFAULT_WIDTH, UPPER_DEFAULT_HEIGHT + (paramCount != 0 ? 20 : 0));
         GluePoint gluePoint = new GluePoint(this, pointOfGluePoint, GluePoint.SCOPE_INNER_CHECK);
         gluePoints.addElement(gluePoint);
         updateSize();
@@ -120,12 +118,13 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = new Vector<>();
-        int[] xs2 = { 0, 0, MINIMUM_WIDTH, MINIMUM_WIDTH };
-        int[] ys2 = { 40, 0, 0, 40 };
+        int[] xs2 = {0, 0, MINIMUM_WIDTH, MINIMUM_WIDTH};
+        int[] ys2 = {40, 0, 0, 40};
         v.add(new BlockPolygon(this, xs2, ys2, new Color(0x3B5168)));
 
-        int[] xs = { MINIMUM_WIDTH + 20, 0, 0, MINIMUM_WIDTH + 20, MINIMUM_WIDTH + 20, 10, 10, MINIMUM_WIDTH + 20 };
-        int[] ys = { 40, 40, 100, 100, 90, 90, 50, 50 };
+        int[] xs = {MINIMUM_WIDTH + 20, 0, 0, MINIMUM_WIDTH + 20, MINIMUM_WIDTH + 20, 10, 10,
+                MINIMUM_WIDTH + 20};
+        int[] ys = {40, 40, 100, 100, 90, 90, 50, 50};
         v.add(new BlockPolygon(this, xs, ys, color));
 
         v.get(1).stretchVertically(-JParameterScopeBlock.INNER_DEFAULT_HEIGHT);

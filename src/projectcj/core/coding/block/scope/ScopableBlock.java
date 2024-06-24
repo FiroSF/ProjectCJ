@@ -1,6 +1,7 @@
 package projectcj.core.coding.block.scope;
 
 import projectcj.core.coding.CodeExecutor;
+import projectcj.core.coding.block.NormalBlockBase;
 
 public interface ScopableBlock {
     /**
@@ -11,4 +12,17 @@ public interface ScopableBlock {
     public CodeExecutor getGlobal();
 
     public void setGlobal(CodeExecutor global);
+
+    /**
+     * Return inner block.
+     * 
+     * @return Inner block of this scope
+     */
+    public NormalBlockBase getInnerBlock();
+
+    /**
+     * Set inner block.
+     * 
+     */
+    public void setInnerBlock(NormalBlockBase innerBlock);
 }

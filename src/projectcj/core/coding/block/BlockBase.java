@@ -6,5 +6,5 @@ public abstract class BlockBase {
     // Upper scope block.
     public ScopableBlock upperScope = null;
 
-    public abstract void run();
+    public abstract Object run();
 }

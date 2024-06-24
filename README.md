@@ -12,6 +12,8 @@
 - is posx posy necessary?
 - show x and y at gui
 
+- ParameterBlock's size is weird (specifically when parameter count > 1)
+
 ## Reminder
 - DO NOT MODIFY additionalWidth and additionalHeight MANUALLY
   - modify this by resizing bolygons and calling updateSize()

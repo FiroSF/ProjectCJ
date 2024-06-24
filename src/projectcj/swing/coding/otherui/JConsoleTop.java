@@ -9,6 +9,7 @@ public class JConsoleTop extends JPanel {
     JButton compileStartButton = new JButton("Compile & Start");
     JButton compileButton = new JButton("Compile");
     JButton startButton = new JButton("Start");
+    JButton stopButton = new JButton("Stop");
 
     public JConsoleTop(JConsole console) {
         this.console = console;
@@ -36,8 +37,16 @@ public class JConsoleTop extends JPanel {
             }
         });
 
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                console.stop();
+            }
+        });
+
         add(compileStartButton);
         add(compileButton);
         add(startButton);
+        add(stopButton);
     }
 }

@@ -1,14 +1,15 @@
 package projectcj.swing.coding.block.special;
 
+import java.awt.Point;
+import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.JParameterBlockBase;
-import projectcj.swing.coding.block.variable.JRValue;
 
 public class JParameter {
     // Default width and height
     public static int DEFAULT_WIDTH = 60;
     public static int DEFAULT_HEIGHT = 40;
 
-    public JRValue innerBlock = null;
+    public JNormalBlockBase innerBlock = null;
     public JParameterBlockBase outerBlock = null;
     public BlockPolygon bolygon = null;
 
@@ -37,6 +38,11 @@ public class JParameter {
     public void moveDelta(int dx, int dy) {
         bolygon.xOffset += dx;
         bolygon.yOffset += dy;
-        gluePoint.moveDelta(dx, 0);
+        gluePoint.moveDelta(dx, dy);
+
+        if (innerBlock != null) {
+            // JNormalBlockBase blk = ((JNormalBlockBase) innerBlock);
+            innerBlock.movePropagation(new Point(innerBlock.posx + dx, innerBlock.posy + dy));
+        }
     }
 }

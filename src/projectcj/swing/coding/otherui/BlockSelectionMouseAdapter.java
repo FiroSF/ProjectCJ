@@ -2,23 +2,19 @@ package projectcj.swing.coding.otherui;
 
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
-import projectcj.swing.coding.block.JNormalBlockBase;
-import projectcj.swing.coding.block.JParameterBlockBase;
-import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
-import projectcj.swing.coding.block.special.JParameter;
-
+import projectcj.swing.coding.otherui.blockSelections.JSingleBlockSelection;
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.JPanel;
 
 public class BlockSelectionMouseAdapter extends MouseAdapter {
-    JBlockSelection blockSelection;
+    JSingleBlockSelection blockSelection;
     JPanel tab;
     Display display;
 
-    public BlockSelectionMouseAdapter(JBlockSelection blockSelection, JPanel tab) {
+    public BlockSelectionMouseAdapter(JSingleBlockSelection blockSelection, JPanel tab) {
         this.blockSelection = blockSelection;
         this.tab = tab;
         display = blockSelection.display;
@@ -77,7 +73,7 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
                         blockSelection.display.isClicked = true;
                         blockSelection.display.clickedBlock = newBlock;
 
-                        System.out.println("Block spawn!");
+                        // System.out.println("Block spawn!");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         System.out.println("CLONE ERROR!!!!!!!!");

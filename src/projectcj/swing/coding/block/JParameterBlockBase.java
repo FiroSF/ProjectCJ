@@ -3,16 +3,12 @@ package projectcj.swing.coding.block;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.Vector;
-import projectcj.core.coding.block.BlockBase;
-import projectcj.core.coding.block.scope.function.ScopeBlock;
 import projectcj.swing.coding.Display;
-import projectcj.swing.coding.block.scope.JScopableBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.block.special.BlockText;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.special.JParameter;
 import projectcj.swing.coding.block.special.ParameterGluePoint;
-import projectcj.swing.coding.block.variable.JRValue;
 
 public abstract class JParameterBlockBase extends JNormalBlockBase {
     // When parameter is updated, other parameters' pos may should be modified.
@@ -25,13 +21,39 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
 
     public JParameterBlockBase(Display display, Color color, String fname, int paramCount) {
         super(display, color);
+
+        // Make params
+        Vector<Integer> params = new Vector<>();
+        for (int i = 0; i < paramCount; i++) {
+            params.add(1);
+        }
+
+        init(display, color, fname, params);
+    }
+
+    public JParameterBlockBase(Display display, Color color, String fname, Vector<Integer> params) {
+        super(display, color);
+        init(display, color, fname, params);
+
+    }
+
+    /**
+     * Initialize function
+     * 
+     * @param display
+     * @param color
+     * @param fname Name of this block
+     * @param params Bitmask, 1 = LValue, 2 = RValue
+     */
+    private void init(Display display, Color color, String fname, Vector<Integer> params) {
         blockName = fname;
 
         // Add params
         int xOffset = X_OFFSET + 20; // X_OFFSET + border + distance between text and parameter
-        for (int i = 0; i < paramCount; i++) {
+        for (int i = 0; i < params.size(); i++) {
             Point gluePos = new Point(xOffset, 10);
-            ParameterGluePoint glue = new ParameterGluePoint(this, gluePos, GluePoint.PARAMETER_CHECK);
+            ParameterGluePoint glue =
+                    new ParameterGluePoint(this, gluePos, GluePoint.PARAMETER_CHECK);
             JParameter param = new JParameter(this, glue, i);
 
             parameters.add(param);
@@ -43,7 +65,7 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         polygons = makePolygon();
 
         // And adjust some positions
-        polygons.get(0).stretchHorizontaly(PARAM_DIST * paramCount);
+        polygons.get(0).stretchHorizontaly(PARAM_DIST * params.size());
 
         // if (paramCount == 0) {
         // // !fix: only single gluepoint should be moved i think
@@ -123,7 +145,8 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         JParameterBlockBase now = this;
         for (int i = 0; i < now.parameters.size(); i++) {
             if (now.parameters.get(i).innerBlock != null) {
-                me.parameters.get(i).innerBlock = (JRValue) ((JBlockBase) now.parameters.get(i).innerBlock).clone();
+                me.parameters.get(i).innerBlock =
+                        (JNormalBlockBase) now.parameters.get(i).innerBlock.clone();
             }
         }
 
@@ -133,8 +156,7 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
     /**
      * Changes parameter size.
      * 
-     * @param index
-     *            which parameter
+     * @param index which parameter
      * @param dw
      * @param dh
      * @return {actualDw, actualDh}
@@ -159,12 +181,26 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
             gluePoint.moveDelta(0, actualDh);
         }
 
+        // for (int i = index + 1; i < parameters.size(); i++) {
+        // JParameter target = parameters.get(i);
+
+        // // Change bolygon pos and gluePoint pos
+        // target.moveDelta(actualDw, actualDh / 2);
+        // }
+
         // And move antoher parameters' pos
-        for (int i = index + 1; i < parameters.size(); i++) {
-            now = parameters.get(i);
+        for (int i = 0; i < parameters.size(); i++) {
+            JParameter target = parameters.get(i);
+            if (target == now)
+                continue;
+
+            int tardw = actualDw, tardh = actualDh / 2;
+            // If this parameter is on left side, dw is 0
+            if (i < index)
+                tardw = 0;
 
             // Change bolygon pos and gluePoint pos
-            now.moveDelta(actualDw, actualDh / 2);
+            target.moveDelta(tardw, tardh);
         }
 
         for (BlockText text : texts) {
@@ -189,6 +225,7 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
     @Override
     public int setInnerText(String innerText) {
         int dx = super.setInnerText(innerText);
+        this.blockName = innerText;
 
         // Move other parameters
         for (JParameter param : parameters) {
@@ -203,8 +240,9 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         // Make parameter polygons
         for (int i = 0; i < parameters.size(); i++) {
             // Param width = 60
-            int[] pxs = { 0, JParameter.DEFAULT_WIDTH, JParameter.DEFAULT_WIDTH, 0, 0, 10, 10, 0 };
-            int[] pys = { 0, 0, 40, 40, 30, 30, 10, 10 };
+            int[] pxs = {0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH + 1, 0 - 1,
+                    0 - 1, 10 - 1, 10 - 1, 0 - 1};
+            int[] pys = {0 - 1, 0 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1, 10 + 1, 10 + 1};
             BlockPolygon bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
             bolygon.stretchHorizontaly(-JParameter.DEFAULT_WIDTH);
             bolygon.stretchVertically(-JParameter.DEFAULT_HEIGHT);
@@ -232,6 +270,6 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
     }
 
     public void addParameter() {
-        // !implement!
+        // TODO: implement!
     }
 }

@@ -14,7 +14,7 @@ public class HelloWorldBlock extends NormalBlockBase {
     }
 
     @Override
-    public void run() {
+    public Object run() {
         System.out.println("Hello world!");
         try {
             upperScope.getGlobal().outs.write(hw + "\n");
@@ -22,5 +22,7 @@ public class HelloWorldBlock extends NormalBlockBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 }

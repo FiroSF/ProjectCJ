@@ -4,13 +4,12 @@ import java.awt.Color;
 import java.util.Vector;
 
 import projectcj.core.coding.block.BlockBase;
-import projectcj.core.coding.block.scope.function.ScopeBlock;
+import projectcj.core.coding.block.scope.ScopableBlock;
 import projectcj.core.coding.block.testblocks.HelloWorldBlock;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.special.BlockPolygon;
-import projectcj.swing.coding.block.special.BlockText;
 
 public class JHelloWorldBlock extends JNormalBlockBase {
     public String hw;
@@ -46,8 +45,8 @@ public class JHelloWorldBlock extends JNormalBlockBase {
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = new Vector<>();
-        int[] xs = { 0, getCalcedWidth(), getCalcedWidth(), 0 };
-        int[] ys = { 0, 0, getCalcedHeight(), getCalcedHeight() };
+        int[] xs = {0, getCalcedWidth(), getCalcedWidth(), 0};
+        int[] ys = {0, 0, getCalcedHeight(), getCalcedHeight()};
         v.add(new BlockPolygon(this, xs, ys));
 
         // texts.addElement(new BlockText(this, hw, 10, 0, Color.WHITE));
@@ -55,8 +54,9 @@ public class JHelloWorldBlock extends JNormalBlockBase {
         return v;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends BlockBase> T getCoreClassObj(ScopeBlock scope) {
+    public <T extends BlockBase> T getCoreClassObj(ScopableBlock scope) {
         return (T) new HelloWorldBlock(scope, hw);
     }
 

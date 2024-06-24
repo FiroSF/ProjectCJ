@@ -15,12 +15,25 @@ public abstract class ScopeBlock extends BlockBase implements ScopableBlock {
         upperScope = scope;
     }
 
+    @Override
     public CodeExecutor getGlobal() {
         return global;
     }
 
+    @Override
     public void setGlobal(CodeExecutor global) {
         this.global = global;
+    }
+
+
+    @Override
+    public NormalBlockBase getInnerBlock() {
+        return innerBlock;
+    }
+
+    @Override
+    public void setInnerBlock(NormalBlockBase innerBlock) {
+        this.innerBlock = innerBlock;
     }
 
     @Override

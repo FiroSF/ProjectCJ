@@ -1,33 +1,24 @@
 package projectcj.swing.coding.otherui;
 
 import javax.swing.*;
-import javax.swing.event.*;
-
-import projectcj.core.coding.CodeCompiler;
-import projectcj.core.coding.CodeExecutor;
-import projectcj.core.coding.ConsoleReader;
-import projectcj.core.coding.ConsoleWriter;
-import projectcj.swing.coding.BlockContainerMouseAdapter;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
-import projectcj.swing.coding.block.builtin.io.JRead;
-import projectcj.swing.coding.block.builtin.io.JWrite;
-import projectcj.swing.coding.block.builtin.keyword.JIf;
-import projectcj.swing.coding.block.scope.function.JStartBlock;
-
+import projectcj.swing.coding.otherui.blockSelections.JSingleBlockSelection;
+import projectcj.swing.coding.otherui.blockSelections.JT1BlockSelection;
+import projectcj.swing.coding.otherui.blockSelections.JT2BlockSelection;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.util.Vector;
 
 public class JBlockSelection extends JPanel {
-    Display display;
-    JBlockBase blks[];
+    public Display display;
+    public Vector<JBlockBase> blks = new Vector<>();
+    Vector<JSingleBlockSelection> blockSelections;
     // BlockSelectionMouseAdapter mouseAdapter;
 
-    JLayeredPane blocks = new JLayeredPane();
-    JPanel blockPanel = new JPanel();
+    // https://stackoverflow.com/a/10346673/24828578
+    // JScrollPane blocksWrapper = new JScrollPane();
+    // JLayeredPane blocks = new JLayeredPane();
+    // JPanel blockPanel = new JPanel();
     JPanel bottom = new JPanel();
     JTabbedPane tab = new JTabbedPane(JTabbedPane.TOP);
 
@@ -37,34 +28,37 @@ public class JBlockSelection extends JPanel {
         setLayout(new BorderLayout(5, 5));
         setBackground(Color.WHITE);
 
-        // Event
-        BlockSelectionMouseAdapter mouseAdapter = new BlockSelectionMouseAdapter(this, blockPanel);
-        blockPanel.addMouseMotionListener(mouseAdapter);
-        blockPanel.addMouseListener(mouseAdapter);
+        // // Event
+        // BlockSelectionMouseAdapter mouseAdapter = new BlockSelectionMouseAdapter(this,
+        // blockPanel);
+        // blockPanel.addMouseMotionListener(mouseAdapter);
+        // blockPanel.addMouseListener(mouseAdapter);
 
-        // https://stackoverflow.com/a/13511696/24828578
-        blocks.setLayout(new BoxLayout(blocks, BoxLayout.Y_AXIS));
-        blockPanel.add(blocks, BorderLayout.CENTER);
+        // // https://stackoverflow.com/a/13511696/24828578
+        // blocks.setLayout(new BoxLayout(blocks, BoxLayout.Y_AXIS));
+        // blockPanel.add(blocks, BorderLayout.CENTER);
+        // blocksWrapper.setViewportView(blockPanel);
 
         // setPreferredSize(new Dimension(500, 500));
         // blocks.setPreferredSize(new Dimension(500, 500));
 
-        tab.addTab("t1", blockPanel);
-        tab.addTab("t2", bottom);
+        blockSelections = new Vector<>();
+        blockSelections.add(new JT1BlockSelection(this));
+        blockSelections.add(new JT2BlockSelection(this));
+
+        for (JSingleBlockSelection selection : blockSelections) {
+            tab.addTab(selection.tabname, selection.getContainer());
+        }
+
+        // tab.addTab("t1", blockSelections.get(0).getContainer());
+        // tab.addTab("t2", bottom);
 
         add(tab, BorderLayout.CENTER);
     }
 
     public void init() {
-        blks = new JBlockBase[] {
-                new JRead(display),
-                new JWrite(display),
-                new JIf(display),
-                new JStartBlock(display),
-        };
-
-        for (JBlockBase block : blks) {
-            blocks.add(block);
+        for (JSingleBlockSelection selection : blockSelections) {
+            selection.init();
         }
     }
 

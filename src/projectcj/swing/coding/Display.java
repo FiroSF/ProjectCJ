@@ -1,27 +1,15 @@
 package projectcj.swing.coding;
 
 import javax.swing.*;
-import javax.swing.event.*;
-
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.JParameterBlockBase;
-import projectcj.swing.coding.block.builtin.io.JRead;
-import projectcj.swing.coding.block.builtin.io.JWrite;
-import projectcj.swing.coding.block.builtin.keyword.JIf;
-import projectcj.swing.coding.block.scope.function.JStartBlock;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.special.JParameter;
-import projectcj.swing.coding.block.testblocks.JBlankBlock;
-import projectcj.swing.coding.block.testblocks.JBlankParamBlock;
-import projectcj.swing.coding.block.testblocks.JBlankScopeBlock;
-import projectcj.swing.coding.block.testblocks.JHelloWorldBlock;
 import projectcj.swing.coding.otherui.JBlockSelection;
 import projectcj.swing.coding.otherui.JConsole;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.Vector;
 
 public class Display extends JFrame {
@@ -199,10 +187,8 @@ public class Display extends JFrame {
     /**
      * When me is moving, this method returns glue point where me should be glued.
      * 
-     * @param me
-     *            target
-     * @param mePoint
-     *            pos of me
+     * @param me target
+     * @param mePoint pos of me
      * @return GluePoint object which refers to glue point
      */
     public GluePoint getGlueObject(JBlockBase me, Point mePoint) {
@@ -220,7 +206,8 @@ public class Display extends JFrame {
 
             // Param gluePoints
             // it's rvalue, single
-            if ((me.getType() & GluePoint.PARAMETER_CHECK) != 0 && ((JNormalBlockBase) me).lowerBlock == null
+            if ((me.getType() & GluePoint.PARAMETER_CHECK) != 0
+                    && ((JNormalBlockBase) me).lowerBlock == null
                     && block instanceof JParameterBlockBase) {
                 Vector<JParameter> params = ((JParameterBlockBase) block).parameters;
 

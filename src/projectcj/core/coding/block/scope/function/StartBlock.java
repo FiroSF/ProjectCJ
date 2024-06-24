@@ -11,8 +11,10 @@ public class StartBlock extends ScopeBlock {
     }
 
     @Override
-    public void run() {
+    public Object run() {
         // Just run inner block.
         runInnerBlock();
+        return null;
     }
+
 }
