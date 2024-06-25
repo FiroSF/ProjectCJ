@@ -19,7 +19,7 @@ public class JT2BlockSelection extends JSingleBlockSelection {
         blks.add(new JGteBlock(display));
 
         for (JBlockBase block : blks) {
-            blocks.add(block);
+            blocksPane.add(block);
         }
 
         for (JBlockBase blk : blks) {

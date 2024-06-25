@@ -1,13 +1,10 @@
 package projectcj.core.coding.block.builtin.keyword;
 
-import projectcj.core.coding.CodeExecutor;
 import projectcj.core.coding.block.NormalBlockBase;
 import projectcj.core.coding.block.scope.ParameterScopeBlock;
 import projectcj.core.coding.block.scope.ScopableBlock;
 
 public class IfBlock extends ParameterScopeBlock {
-    CodeExecutor global;
-
     public IfBlock(ScopableBlock scope) {
         super(scope);
     }

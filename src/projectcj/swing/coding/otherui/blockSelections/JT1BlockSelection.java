@@ -29,7 +29,7 @@ public class JT1BlockSelection extends JSingleBlockSelection {
         blks.add(new JAssignBlock(display));
 
         for (JBlockBase block : blks) {
-            blocks.add(block);
+            blocksPane.add(block);
         }
 
         JLiteralBlock literalBlock = new JLiteralBlock(display);
@@ -40,12 +40,12 @@ public class JT1BlockSelection extends JSingleBlockSelection {
                 literalBlock.setInnerText("\"" + blockNameTextField.getText() + "\"");
             }
         });
-        blocks.add(blockNameTextField);
-        blocks.add(literalBlock);
+        blocksPane.add(blockNameTextField);
+        blocksPane.add(literalBlock);
         blks.add(literalBlock);
 
         JVariableDeclareBlock variableDeclareBlock = new JVariableDeclareBlock(display);
-        blocks.add(variableDeclareBlock);
+        blocksPane.add(variableDeclareBlock);
         blks.add(variableDeclareBlock);
 
         JVariableNameBlock variableNameBlock = new JVariableNameBlock(display);
@@ -56,10 +56,9 @@ public class JT1BlockSelection extends JSingleBlockSelection {
                 variableNameBlock.setInnerText(variableNamTextField.getText());
             }
         });
-        blocks.add(variableNamTextField);
-        blocks.add(variableNameBlock);
+        blocksPane.add(variableNamTextField);
+        blocksPane.add(variableNameBlock);
         blks.add(variableNameBlock);
-
 
         for (JBlockBase blk : blks) {
             blockSelection.blks.add(blk);

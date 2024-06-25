@@ -35,7 +35,7 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     public Color color = Color.GRAY;
 
     // For tracking another blocks' glue area
-    protected Display display;
+    public Display display;
 
     // Upper scope block.
     public JScopableBlock upperScope = null;
@@ -56,10 +56,14 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     public int xoffset;
     public int yoffset;
 
+    // JLValue, JRValue offsets
+    public int X_OFFSET = 0;
+
     /**
      * Constructor
      * 
-     * @param display original display
+     * @param display
+     *            original display
      */
     public JBlockBase(Display display, Color color) {
         setOpaque(false);
@@ -117,7 +121,8 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     /**
      * Get target glue object(where this object should be glued).
      * 
-     * @param pos current pos
+     * @param pos
+     *            current pos
      * @return GluePoint object which refers to glue point
      */
     public GluePoint getTargetGlueObject(Point pos) {
@@ -213,7 +218,8 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
     /**
      * This method handles movement
      * 
-     * @param e MouseEvent object from mouseDragged event
+     * @param e
+     *            MouseEvent object from mouseDragged event
      */
     public abstract void handleMove(MouseEvent e);
 

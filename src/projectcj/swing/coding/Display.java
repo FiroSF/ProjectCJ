@@ -4,6 +4,7 @@ import javax.swing.*;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.JParameterBlockBase;
+import projectcj.swing.coding.block.scope.function.JFunctionBlock;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.special.JParameter;
 import projectcj.swing.coding.otherui.JBlockSelection;
@@ -123,46 +124,6 @@ public class Display extends JFrame {
     public void init() {
         blockSelection.init();
 
-        // // For test
-        // ArrayList<JBlockBase> blocks = new ArrayList<>();
-
-        // JStartBlock startBlock = new JStartBlock(this);
-        // startBlock.movePropagation(new Point(0, 300));
-        // blocks.add(startBlock);
-
-        // JRead jread = new JRead(this);
-        // jread.movePropagation(new Point(500, 0));
-        // blocks.add(jread);
-
-        // JWrite jwrite = new JWrite(this);
-        // jwrite.movePropagation(new Point(300, 0));
-        // blocks.add(jwrite);
-
-        // for (int i = 0; i < 5; i++) {
-        // JIf asdf = new JIf(this);
-        // asdf.movePropagation(new Point(100, 500 + 100 * i));
-        // blocks.add(asdf);
-        // }
-
-        // for (int i = 0; i < 5; i++) {
-        // JHelloWorldBlock helloWorldBlock = new JHelloWorldBlock(this, "Hello world!"
-        // + i);
-        // helloWorldBlock.movePropagation(new Point(50, 500));
-        // blocks.add(helloWorldBlock);
-        // }
-
-        // for (int i = 0; i < 10; i++) {
-        // JBlankParamBlock block = new JBlankParamBlock(this, 120 * i, 60 * i, 100, 50,
-        // new Color(i * 20, i * 20, i * 20));
-        // block.polygons.elementAt(0).stretchHorizontaly(i * 20);
-        // blocks.add(block);
-        // }
-
-        // for (JBlockBase blk : blocks) {
-        // blockContainer.add(blk, -1);
-        // }
-
-        // c.add(blockContainer, BorderLayout.CENTER, 0);
         c.add(console, BorderLayout.EAST, -1);
         c.add(blockSelection, BorderLayout.WEST, -1);
 
@@ -187,8 +148,10 @@ public class Display extends JFrame {
     /**
      * When me is moving, this method returns glue point where me should be glued.
      * 
-     * @param me target
-     * @param mePoint pos of me
+     * @param me
+     *            target
+     * @param mePoint
+     *            pos of me
      * @return GluePoint object which refers to glue point
      */
     public GluePoint getGlueObject(JBlockBase me, Point mePoint) {
@@ -238,5 +201,13 @@ public class Display extends JFrame {
         }
 
         return null;
+    }
+
+    public void addFunction(JFunctionBlock functionBlock) {
+        blockSelection.addFunction(functionBlock);
+    }
+
+    public void removeFunciton(JFunctionBlock functionBlock) {
+        blockSelection.removeFunction(functionBlock);
     }
 }

@@ -26,6 +26,9 @@ public class JParameter {
         outerBlock = outer;
         gluePoint = glue;
 
+        width = DEFAULT_WIDTH;
+        height = DEFAULT_HEIGHT;
+
         glue.setParentParam(this);
     }
 

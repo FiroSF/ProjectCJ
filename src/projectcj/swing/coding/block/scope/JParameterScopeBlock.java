@@ -30,11 +30,10 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
         // additionalHeight += 60;
 
         // Stratch brace
-        polygons.get(1).stretchHorizontaly(PARAM_DIST * paramCount);
+        // polygons.get(1).stretchHorizontaly(PARAM_DIST * paramCount);
 
         // Set default gluePoint (inside of scope)
-        Point pointOfGluePoint =
-                new Point(LINE_DEFAULT_WIDTH, UPPER_DEFAULT_HEIGHT + (paramCount != 0 ? 20 : 0));
+        Point pointOfGluePoint = new Point(LINE_DEFAULT_WIDTH, UPPER_DEFAULT_HEIGHT + (paramCount != 0 ? 20 : 0));
         GluePoint gluePoint = new GluePoint(this, pointOfGluePoint, GluePoint.SCOPE_INNER_CHECK);
         gluePoints.addElement(gluePoint);
         updateSize();
@@ -118,25 +117,25 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = new Vector<>();
-        int[] xs2 = {0, 0, MINIMUM_WIDTH, MINIMUM_WIDTH};
-        int[] ys2 = {40, 0, 0, 40};
+        int[] xs2 = { 0, 0, MINIMUM_WIDTH, MINIMUM_WIDTH };
+        int[] ys2 = { 40, 0, 0, 40 };
         v.add(new BlockPolygon(this, xs2, ys2, new Color(0x3B5168)));
 
-        int[] xs = {MINIMUM_WIDTH + 20, 0, 0, MINIMUM_WIDTH + 20, MINIMUM_WIDTH + 20, 10, 10,
-                MINIMUM_WIDTH + 20};
-        int[] ys = {40, 40, 100, 100, 90, 90, 50, 50};
+        int[] xs = { MINIMUM_WIDTH + 20, 0, 0, MINIMUM_WIDTH + 20, MINIMUM_WIDTH + 20, 10, 10,
+                MINIMUM_WIDTH + 20 };
+        int[] ys = { 40, 40, 100, 100, 90, 90, 50, 50 };
         v.add(new BlockPolygon(this, xs, ys, color));
 
         v.get(1).stretchVertically(-JParameterScopeBlock.INNER_DEFAULT_HEIGHT);
         v.get(0).stretchHorizontaly(-MINIMUM_WIDTH + 20 + X_OFFSET);
         v.get(1).stretchHorizontaly(-MINIMUM_WIDTH + 20 + X_OFFSET);
-        makeParameters(v);
+        // makeParameters(v);
 
-        if (parameters.size() > 0) {
-            v.get(0).stretchVertically(20);
-            v.get(1).moveDelta(0, 20);
-            // gluePoints.get(0).moveDelta(0, 20);
-        }
+        // if (parameters.size() > 0) {
+        // v.get(0).stretchVertically(20);
+        // v.get(1).moveDelta(0, 20);
+        // // gluePoints.get(0).moveDelta(0, 20);
+        // }
 
         return v;
     }
@@ -145,6 +144,7 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
     public int setInnerText(String innerText) {
         int originalWidth = getInnerText().getWidth();
         getInnerText().setText(innerText);
+        this.blockName = innerText;
 
         int dx = getInnerText().getWidth() - originalWidth;
         // System.out.println(dx);
@@ -159,8 +159,31 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
         for (JParameter param : parameters) {
             param.moveDelta(dx, 0);
         }
+        newParamX += dx;
 
         updateSize();
         return dx;
+    }
+
+    @Override
+    public void addParameter() {
+        if (parameters.size() == 0) {
+            // polygons.get(0).stretchVertically(20);
+            polygons.get(1).moveDelta(0, 20);
+            // gluePoints.get(0).moveDelta(0, 20);
+        }
+
+        super.addParameter();
+
+        // Stratch brace
+        polygons.get(1).stretchHorizontaly(PARAM_DIST);
+    }
+
+    @Override
+    public void removeParameter() {
+        super.removeParameter();
+
+        // Shrink brace
+        polygons.get(1).stretchHorizontaly(-PARAM_DIST);
     }
 }

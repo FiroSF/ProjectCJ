@@ -6,7 +6,7 @@ import projectcj.core.coding.block.ParameterBlockBase;
 
 public abstract class ParameterScopeBlock extends ParameterBlockBase implements ScopableBlock {
     // Global scope
-    CodeExecutor global;
+    public CodeExecutor global;
     NormalBlockBase innerBlock = null;
 
     public ParameterScopeBlock(ScopableBlock scope) {
@@ -16,18 +16,17 @@ public abstract class ParameterScopeBlock extends ParameterBlockBase implements 
 
     @Override
     public void runInnerBlock() {
-        // Add function scope
-        global.functionCallStack.push(this);
-
         // Run innerBlocks
         NormalBlockBase now = innerBlock;
         while (now != null) {
             now.run();
             now = now.lowerBlock;
-        }
 
-        // Remove function scope
-        global.functionCallStack.pop();
+            // Function return
+            if (upperScope.getGlobal().functionCallStack.peek().returnValue != null) {
+                return;
+            }
+        }
     }
 
     @Override
@@ -39,7 +38,6 @@ public abstract class ParameterScopeBlock extends ParameterBlockBase implements 
     public void setGlobal(CodeExecutor global) {
         this.global = global;
     }
-
 
     @Override
     public NormalBlockBase getInnerBlock() {

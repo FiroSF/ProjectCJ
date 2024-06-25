@@ -25,7 +25,6 @@ public abstract class ScopeBlock extends BlockBase implements ScopableBlock {
         this.global = global;
     }
 
-
     @Override
     public NormalBlockBase getInnerBlock() {
         return innerBlock;
@@ -38,17 +37,11 @@ public abstract class ScopeBlock extends BlockBase implements ScopableBlock {
 
     @Override
     public void runInnerBlock() {
-        // Add function scope
-        global.functionCallStack.push(this);
-
         // Run innerBlocks
         NormalBlockBase now = innerBlock;
         while (now != null) {
             now.run();
             now = now.lowerBlock;
         }
-
-        // Remove function scope
-        global.functionCallStack.pop();
     }
 }

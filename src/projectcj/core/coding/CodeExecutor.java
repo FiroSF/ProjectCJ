@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Stack;
 
-import projectcj.core.coding.block.scope.ScopableBlock;
+import projectcj.core.coding.block.scope.function.FunctionBlock;
+import projectcj.core.coding.block.scope.function.FunctionStackObj;
 import projectcj.core.coding.block.scope.function.StartBlock;
 
 public class CodeExecutor {
-    public Stack<ScopableBlock> functionCallStack = new Stack<>();
+    public Stack<FunctionStackObj> functionCallStack = new Stack<>();
     public HashMap<String, Object> variables = new HashMap<>();
+    public HashMap<String, FunctionBlock> functions = new HashMap<>();
     public BufferedReader ins;
     public BufferedWriter outs;
     StartBlock startBlock;
@@ -56,5 +58,9 @@ public class CodeExecutor {
 
     public void stop() {
         process.interrupt();
+    }
+
+    public FunctionBlock getFunction(String fname) {
+        return functions.get(fname);
     }
 }

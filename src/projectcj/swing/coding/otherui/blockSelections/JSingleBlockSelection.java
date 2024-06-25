@@ -1,6 +1,5 @@
 package projectcj.swing.coding.otherui.blockSelections;
 
-
 import javax.swing.*;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
@@ -18,7 +17,7 @@ public abstract class JSingleBlockSelection {
     public String tabname;
 
     // Swings
-    JLayeredPane blocks = new JLayeredPane();
+    JLayeredPane blocksPane = new JLayeredPane();
     JPanel blockPanel = new JPanel();
     // https://stackoverflow.com/a/10346673/24828578
     JScrollPane blocksWrapper = new JScrollPane();
@@ -33,8 +32,8 @@ public abstract class JSingleBlockSelection {
         blockPanel.addMouseListener(mouseAdapter);
 
         // https://stackoverflow.com/a/13511696/24828578
-        blocks.setLayout(new BoxLayout(blocks, BoxLayout.Y_AXIS));
-        blockPanel.add(blocks, BorderLayout.CENTER);
+        blocksPane.setLayout(new BoxLayout(blocksPane, BoxLayout.Y_AXIS));
+        blockPanel.add(blocksPane, BorderLayout.CENTER);
         blocksWrapper.setViewportView(blockPanel);
 
         this.tabname = tabname;

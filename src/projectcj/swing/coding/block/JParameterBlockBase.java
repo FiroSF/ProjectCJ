@@ -16,7 +16,10 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
     public Vector<JParameter> parameters = new Vector<>();
     public String blockName = "";
 
-    // Default distance between params
+    // X pos where new params will be
+    public int newParamX;
+
+    // Default distance between params' gluePoint
     public final int PARAM_DIST = 80;
 
     public JParameterBlockBase(Display display, Color color, String fname, int paramCount) {
@@ -42,37 +45,33 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
      * 
      * @param display
      * @param color
-     * @param fname Name of this block
-     * @param params Bitmask, 1 = LValue, 2 = RValue
+     * @param fname
+     *            Name of this block
+     * @param params
+     *            Bitmask, 1 = LValue, 2 = RValue
      */
     private void init(Display display, Color color, String fname, Vector<Integer> params) {
         blockName = fname;
-
-        // Add params
-        int xOffset = X_OFFSET + 20; // X_OFFSET + border + distance between text and parameter
-        for (int i = 0; i < params.size(); i++) {
-            Point gluePos = new Point(xOffset, 10);
-            ParameterGluePoint glue =
-                    new ParameterGluePoint(this, gluePos, GluePoint.PARAMETER_CHECK);
-            JParameter param = new JParameter(this, glue, i);
-
-            parameters.add(param);
-
-            xOffset += PARAM_DIST;
-        }
+        newParamX = X_OFFSET + 20; // X_OFFSET + border + distance between text and parameter
 
         // Make polygons
         polygons = makePolygon();
 
-        // And adjust some positions
-        polygons.get(0).stretchHorizontaly(PARAM_DIST * params.size());
+        // Add params
+        for (int i = 0; i < params.size(); i++) {
+            addParameter();
+            // Point gluePos = new Point(newParamX, 10);
+            // ParameterGluePoint glue = new ParameterGluePoint(this, gluePos,
+            // GluePoint.PARAMETER_CHECK);
+            // JParameter param = new JParameter(this, glue, i);
 
-        // if (paramCount == 0) {
-        // // !fix: only single gluepoint should be moved i think
-        // for (GluePoint gluePoint : gluePoints) {
-        // gluePoint.moveDelta(0, -20);
-        // }
-        // }
+            // parameters.add(param);
+
+            // newParamX += PARAM_DIST;
+        }
+
+        // And adjust some positions
+        // polygons.get(0).stretchHorizontaly(PARAM_DIST * params.size());
 
         // RValue offset
         BlockText text = texts.get(0);
@@ -145,8 +144,7 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         JParameterBlockBase now = this;
         for (int i = 0; i < now.parameters.size(); i++) {
             if (now.parameters.get(i).innerBlock != null) {
-                me.parameters.get(i).innerBlock =
-                        (JNormalBlockBase) now.parameters.get(i).innerBlock.clone();
+                me.parameters.get(i).innerBlock = (JNormalBlockBase) now.parameters.get(i).innerBlock.clone();
             }
         }
 
@@ -156,7 +154,8 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
     /**
      * Changes parameter size.
      * 
-     * @param index which parameter
+     * @param index
+     *            which parameter
      * @param dw
      * @param dh
      * @return {actualDw, actualDh}
@@ -169,8 +168,9 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         int actualDw = now.bolygon.stretchHorizontaly(dw);
         int actualDh = now.bolygon.stretchVertically(dh);
 
-        now.width = now.width + actualDw;
-        now.height = now.height + actualDh;
+        now.width += actualDw;
+        now.height += actualDh;
+        newParamX += actualDw;
 
         // Change body size
         polygons.get(0).stretchHorizontaly(actualDw);
@@ -231,45 +231,100 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         for (JParameter param : parameters) {
             param.moveDelta(dx, 0);
         }
+        newParamX += dx;
 
         updateSize();
         return dx;
     }
 
-    public void makeParameters(Vector<BlockPolygon> v) {
-        // Make parameter polygons
-        for (int i = 0; i < parameters.size(); i++) {
-            // Param width = 60
-            int[] pxs = {0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH + 1, 0 - 1,
-                    0 - 1, 10 - 1, 10 - 1, 0 - 1};
-            int[] pys = {0 - 1, 0 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1, 10 + 1, 10 + 1};
-            BlockPolygon bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
-            bolygon.stretchHorizontaly(-JParameter.DEFAULT_WIDTH);
-            bolygon.stretchVertically(-JParameter.DEFAULT_HEIGHT);
+    // public void makeParameters(Vector<BlockPolygon> v) {
+    // // Make parameter polygons
+    // for (int i = 0; i < parameters.size(); i++) {
+    // // Param width = 60
+    // int[] pxs = { 0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH +
+    // 1, 0 - 1,
+    // 0 - 1, 10 - 1, 10 - 1, 0 - 1 };
+    // int[] pys = { 0 - 1, 0 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1, 10 + 1, 10 + 1 };
+    // BlockPolygon bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
+    // bolygon.stretchHorizontaly(-JParameter.DEFAULT_WIDTH);
+    // bolygon.stretchVertically(-JParameter.DEFAULT_HEIGHT);
 
-            // Offset
-            bolygon.xOffset = parameters.get(i).gluePoint.getOffset().x;
-            bolygon.yOffset = parameters.get(i).gluePoint.getOffset().y;
+    // // Offset
+    // bolygon.xOffset = parameters.get(i).gluePoint.getOffset().x;
+    // bolygon.yOffset = parameters.get(i).gluePoint.getOffset().y;
 
-            v.add(bolygon);
-            parameters.get(i).bolygon = bolygon;
-        }
-    }
+    // v.add(bolygon);
+    // parameters.get(i).bolygon = bolygon;
+    // }
+    // }
 
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = super.makePolygon();
-        makeParameters(v);
+        // makeParameters(v);
 
-        if (parameters.size() > 0) {
-            v.get(0).stretchVertically(20);
-            gluePoints.get(0).moveDelta(0, 20);
-        }
+        // if (parameters.size() > 0) {
+        // v.get(0).stretchVertically(20);
+        // gluePoints.get(0).moveDelta(0, 20);
+        // }
 
         return v;
     }
 
     public void addParameter() {
-        // TODO: implement!
+        // Add data first
+        int idx = parameters.size();
+        Point gluePos = new Point(newParamX, 10);
+        ParameterGluePoint glue = new ParameterGluePoint(this, gluePos, GluePoint.PARAMETER_CHECK);
+        JParameter param = new JParameter(this, glue, idx);
+
+        if (idx == 0) {
+            for (BlockText text : texts) {
+                text.setY(text.getY() + 10);
+            }
+            polygons.get(0).stretchVertically(20);
+            gluePoints.get(0).moveDelta(0, 20);
+        }
+
+        polygons.get(0).stretchHorizontaly(PARAM_DIST);
+        parameters.add(param);
+        newParamX += PARAM_DIST;
+
+        // Polygon part
+        // Param width = 60
+        int[] pxs = { 0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH + 1, 0 - 1,
+                0 - 1, 10 - 1, 10 - 1, 0 - 1 };
+        int[] pys = { 0 - 1, 0 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1, 10 + 1, 10 + 1 };
+        BlockPolygon bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
+        bolygon.stretchHorizontaly(-JParameter.DEFAULT_WIDTH);
+        bolygon.stretchVertically(-JParameter.DEFAULT_HEIGHT);
+
+        // Offset
+        bolygon.xOffset = parameters.get(idx).gluePoint.getOffset().x;
+        bolygon.yOffset = parameters.get(idx).gluePoint.getOffset().y;
+
+        polygons.add(bolygon);
+        parameters.get(idx).bolygon = bolygon;
+
+        updateSize();
+    }
+
+    public void removeParameter() {
+        parameters.removeElementAt(parameters.size() - 1);
+        polygons.remove(polygons.size() - 1);
+        newParamX -= PARAM_DIST;
+
+        polygons.get(0).stretchHorizontaly(-PARAM_DIST);
+
+        if (parameters.size() == 0) {
+            for (BlockText text : texts) {
+                text.setY(text.getY() - 10);
+            }
+
+            polygons.get(0).stretchVertically(-20);
+            gluePoints.get(0).moveDelta(0, -20);
+        }
+
+        updateSize();
     }
 }

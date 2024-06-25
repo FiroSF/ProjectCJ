@@ -12,6 +12,8 @@
 - is posx posy necessary?
 - show x and y at gui
 
+- Function right click - rename
+
 - ParameterBlock's size is weird (specifically when parameter count > 1)
 
 ## Reminder

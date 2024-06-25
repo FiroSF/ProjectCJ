@@ -7,13 +7,14 @@ import java.io.BufferedWriter;
 import projectcj.core.coding.block.NormalBlockBase;
 import projectcj.core.coding.block.ParameterBlockBase;
 import projectcj.core.coding.block.scope.ScopableBlock;
-import projectcj.core.coding.block.scope.function.ScopeBlock;
+import projectcj.core.coding.block.scope.function.FunctionBlock;
 import projectcj.core.coding.block.scope.function.StartBlock;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JNormalBlockBase;
 import projectcj.swing.coding.block.JParameterBlockBase;
 import projectcj.swing.coding.block.scope.JScopableBlock;
-import projectcj.swing.coding.block.scope.function.JScopeBlock;
+import projectcj.swing.coding.block.scope.function.JFunctionBlock;
+import projectcj.swing.coding.block.scope.function.JStartBlock;
 import projectcj.swing.coding.block.special.JParameter;
 
 /**
@@ -32,30 +33,44 @@ public class CodeCompiler {
     /**
      * Compile all code.
      * 
-     * @param blocks List of swing blocks.
+     * @param blocks
+     *            List of swing blocks.
      * @return Executor object
      */
     public CodeExecutor compile(Component[] blocks) {
         CodeExecutor executor = new CodeExecutor(ins, outs);
-        StartBlock startBlock;
+        StartBlock startBlock = null;
 
-        // Find only functions
+        // Find only start block
         for (Component obj : blocks) {
             if (!(obj instanceof JBlockBase))
                 continue;
             JBlockBase block = (JBlockBase) obj;
 
-            if (block instanceof JScopeBlock) {
-                ScopeBlock scopeBlock = compileFunction(executor, (JScopeBlock) block);
+            if (block instanceof JStartBlock) {
+                ScopableBlock scopeBlock = compileFunction(executor, (JStartBlock) block, null);
 
                 // Set startBlock
-                if (scopeBlock instanceof StartBlock) {
-                    startBlock = (StartBlock) scopeBlock;
-                    executor.setStartBlock(startBlock);
-                }
+                startBlock = (StartBlock) scopeBlock;
+                executor.setStartBlock(startBlock);
             }
         }
 
+        // For functions
+        for (Component obj : blocks) {
+            if (!(obj instanceof JBlockBase))
+                continue;
+            JBlockBase block = (JBlockBase) obj;
+
+            // It's really bad way to implement this.
+            // But I can't change all of weird code...
+            if (block instanceof JFunctionBlock) {
+                ScopableBlock scopeBlock = compileFunction(executor, (JFunctionBlock) block, startBlock);
+
+                // Set functions
+                executor.functions.put(((JFunctionBlock) block).blockName, (FunctionBlock) scopeBlock);
+            }
+        }
         return executor;
     }
 
@@ -121,8 +136,10 @@ public class CodeCompiler {
     /**
      * Compile only scopableBlock's inners.
      * 
-     * @param jScopeableBlcok Original JBlock
-     * @param scopableBlock New block
+     * @param jScopeableBlcok
+     *            Original JBlock
+     * @param scopableBlock
+     *            New block
      */
     public void compileInners(JScopableBlock jScopeableBlcok, ScopableBlock scopableBlock) {
         // Compile inner blocks
@@ -147,16 +164,23 @@ public class CodeCompiler {
     /**
      * Compiles single function.
      * 
-     * @param jScopeBlock Function swing object
+     * @param jScopeBlock
+     *            Function swing object
      * @return Function core object
      */
-    public ScopeBlock compileFunction(CodeExecutor executor, JScopeBlock jScopeBlock) {
+    public ScopableBlock compileFunction(CodeExecutor executor, JScopableBlock jScopeBlock, ScopableBlock upperScope) {
         // Make function core object
-        ScopeBlock scopeBlock = jScopeBlock.getCoreClassObj(null);
+        ScopableBlock scopeBlock = ((JBlockBase) jScopeBlock).getCoreClassObj(upperScope);
         scopeBlock.setGlobal(executor);
 
         // Compile inner blocks
         compileInners(jScopeBlock, scopeBlock);
+
+        // Compile params
+        if (jScopeBlock instanceof JParameterBlockBase) {
+            compileParams((JParameterBlockBase) jScopeBlock, (ParameterBlockBase) scopeBlock);
+        }
+
         return scopeBlock;
     }
 }
