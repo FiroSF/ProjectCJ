@@ -1,6 +1,8 @@
 package projectcj.swing.coding.otherui;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
+
 import projectcj.core.coding.CodeCompiler;
 import projectcj.core.coding.CodeExecutor;
 import projectcj.core.coding.ConsoleInputStream;
@@ -32,7 +34,7 @@ public class JConsole extends JPanel {
 
     JButton enterButton = new JButton("enter");
     JTextArea consoleMainText = new JTextArea("");
-    JTextField consoleInput = new JTextField("test2", 30);
+    JTextField consoleInput = new JTextField("", 30);
 
     public JConsole(Display display) {
         this.display = display;
@@ -57,7 +59,6 @@ public class JConsole extends JPanel {
 
         bottom.add(consoleInput);
 
-
         // User input
         ActionListener enterActionListener = new ActionListener() {
             @Override
@@ -65,6 +66,7 @@ public class JConsole extends JPanel {
                 String inp = consoleInput.getText();
                 consoleInput.setText("");
 
+                write("Input: " + inp + "\n");
                 consoleReader.supplyData(inp + "\n");
             }
         };
@@ -73,9 +75,13 @@ public class JConsole extends JPanel {
 
         bottom.add(enterButton);
 
-
-
         center = new JScrollPane(consoleMainText);
+        center.setPreferredSize(new Dimension(400, 2000));
+
+        // https://stackoverflow.com/a/2483824/24828578
+        DefaultCaret caret = (DefaultCaret) consoleMainText.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
         add(top, BorderLayout.NORTH);
         add(center, BorderLayout.CENTER);
         // add(center, BorderLayout.CENTER);
@@ -103,8 +109,10 @@ public class JConsole extends JPanel {
      */
     public void compile() {
         System.out.println("Compiling...");
+        consoleMainText.append("=== Compiling... ===\n");
         executor = compiler.compile(display.blockContainer.getComponents());
         System.out.println("Compiled");
+        consoleMainText.append("=== Compiled ===\n");
     }
 
     /**

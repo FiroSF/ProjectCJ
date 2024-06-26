@@ -6,8 +6,10 @@ import projectcj.core.coding.block.NormalBlockBase;
 public interface ScopableBlock {
     /**
      * Just run scope's inner blocks.
+     * 
+     * @return BreakSignal if break is called
      */
-    void runInnerBlock();
+    Object runInnerBlock();
 
     public CodeExecutor getGlobal();
 

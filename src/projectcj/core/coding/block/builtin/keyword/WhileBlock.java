@@ -25,9 +25,11 @@ public class WhileBlock extends ParameterScopeBlock {
                 return null;
             }
 
-            // Falsy values
-            if (!(tar.equals(0) || tar.equals(false) || tar.equals(null) || tar.equals(""))) {
-                runInnerBlock();
+            if (trueCheck(tar)) {
+                // Break
+                if (runInnerBlock() instanceof BreakSignal) {
+                    return null;
+                }
             } else {
                 return null;
             }

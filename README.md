@@ -1,19 +1,11 @@
 ## TODO
 
-- Implement compiler and executor
-- Implement NormalScopeBlock
-
 - repair constructor (x, y)
   - JFunctionRunnerBlockBase and JParameterBlockBase
   - Location should not be set at constructor.
 
-- Change parameter count
-- Change innertext
-- is posx posy necessary?
 - show x and y at gui
-
 - Function right click - rename
-
 - ParameterBlock's size is weird (specifically when parameter count > 1)
 
 ## Reminder

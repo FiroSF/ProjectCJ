@@ -39,26 +39,13 @@ public class JBlockSelection extends JPanel {
         setLayout(new BorderLayout(5, 5));
         setBackground(Color.WHITE);
 
-        // // Event
-        // BlockSelectionMouseAdapter mouseAdapter = new
-        // BlockSelectionMouseAdapter(this,
-        // blockPanel);
-        // blockPanel.addMouseMotionListener(mouseAdapter);
-        // blockPanel.addMouseListener(mouseAdapter);
-
-        // // https://stackoverflow.com/a/13511696/24828578
-        // blocks.setLayout(new BoxLayout(blocks, BoxLayout.Y_AXIS));
-        // blockPanel.add(blocks, BorderLayout.CENTER);
-        // blocksWrapper.setViewportView(blockPanel);
-
-        // setPreferredSize(new Dimension(500, 500));
-        // blocks.setPreferredSize(new Dimension(500, 500));
-
         blockSelections = new Vector<>();
         blockSelections.add(new JT1BlockSelection(this));
         blockSelections.add(new JT2BlockSelection(this));
         functionSelection = new JT3BlockSelection(this);
         blockSelections.add(functionSelection);
+        blockSelections.add(new JT4BlockSelection(this));
+        blockSelections.add(new JT5BlockSelection(this));
 
         for (JSingleBlockSelection selection : blockSelections) {
             tab.addTab(selection.tabname, selection.getContainer());

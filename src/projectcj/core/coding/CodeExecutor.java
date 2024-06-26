@@ -3,6 +3,8 @@ package projectcj.core.coding;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -18,6 +20,7 @@ public class CodeExecutor {
     public BufferedWriter outs;
     StartBlock startBlock;
     Thread process;
+    public boolean isInterrupted;
 
     public void setStartBlock(StartBlock startBlock) {
         this.startBlock = startBlock;
@@ -46,8 +49,20 @@ public class CodeExecutor {
                     System.out.println("Run end");
                     outs.write("=== Program end ===\n");
                     outs.flush();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
+                    try {
+                        outs.write("=== Program crashed! ===\n");
+                        // https://www.baeldung.com/java-stacktrace-to-string
+                        StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        e.printStackTrace(pw);
+                        outs.write(sw.toString());
+                        outs.write("=== See details at java console ===\n");
+                        outs.flush();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         };
@@ -58,6 +73,13 @@ public class CodeExecutor {
 
     public void stop() {
         process.interrupt();
+        try {
+            System.out.println("Program stopped");
+            outs.write("=== Program stopped by user ===\n");
+            outs.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public FunctionBlock getFunction(String fname) {

@@ -142,10 +142,20 @@ public abstract class JBlockBase extends JPanel implements Cloneable {
         return DEFAULT_HEIGHT + additionalHeight;
     }
 
+    /**
+     * Deprecated
+     * 
+     * @param w
+     */
     public void setWidth(int w) {
         additionalWidth = w - DEFAULT_WIDTH;
     }
 
+    /**
+     * Deprecated
+     * 
+     * @param h
+     */
     public void setHeight(int h) {
         additionalHeight = h - DEFAULT_HEIGHT;
     }

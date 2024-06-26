@@ -13,6 +13,7 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
     JSingleBlockSelection blockSelection;
     JPanel tab;
     Display display;
+    static int TAB_OFFSET = 25;
 
     public BlockSelectionMouseAdapter(JSingleBlockSelection blockSelection, JPanel tab) {
         this.blockSelection = blockSelection;
@@ -22,7 +23,8 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY());
+        int scrollSize = blockSelection.blocksScrollWrapper.getVerticalScrollBar().getValue();
+        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY() - scrollSize + TAB_OFFSET);
         blockSelection.display.mouseAdapter.mouseMoved(e);
     }
 
@@ -32,13 +34,15 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
         if (display.clickedBlock == null)
             return;
 
-        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY());
+        int scrollSize = blockSelection.blocksScrollWrapper.getVerticalScrollBar().getValue();
+        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY() - scrollSize + TAB_OFFSET);
         blockSelection.display.mouseAdapter.mouseDragged(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY());
+        int scrollSize = blockSelection.blocksScrollWrapper.getVerticalScrollBar().getValue();
+        e.translatePoint(-display.posx + tab.getX(), -display.posy + tab.getY() - scrollSize + TAB_OFFSET);
         blockSelection.display.mouseAdapter.mouseReleased(e);
     }
 

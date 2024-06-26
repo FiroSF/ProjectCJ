@@ -22,8 +22,17 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
 
     protected int innerAdditionalHeight = 0;
 
+    public JParameterScopeBlock(Display display, Color color, String bname, Vector<Integer> params) {
+        super(display, color, bname, params);
+        init(params.size());
+    }
+
     public JParameterScopeBlock(Display display, Color color, String bname, int paramCount) {
         super(display, color, bname, paramCount);
+        init(paramCount);
+    }
+
+    private void init(int paramCount) {
         TYPE = 3;
 
         // Scope body's height
@@ -166,14 +175,14 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
     }
 
     @Override
-    public void addParameter() {
+    public void addParameter(int type) {
         if (parameters.size() == 0) {
             // polygons.get(0).stretchVertically(20);
             polygons.get(1).moveDelta(0, 20);
             // gluePoints.get(0).moveDelta(0, 20);
         }
 
-        super.addParameter();
+        super.addParameter(type);
 
         // Stratch brace
         polygons.get(1).stretchHorizontaly(PARAM_DIST);

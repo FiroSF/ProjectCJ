@@ -35,6 +35,10 @@ public class GluePoint {
         return type;
     }
 
+    public void setType(int type) {
+        this.type = type;
+    }
+
     /**
      * Translate point to appropriate point, and return
      * 

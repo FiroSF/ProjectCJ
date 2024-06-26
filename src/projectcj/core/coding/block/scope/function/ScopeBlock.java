@@ -36,12 +36,13 @@ public abstract class ScopeBlock extends BlockBase implements ScopableBlock {
     }
 
     @Override
-    public void runInnerBlock() {
+    public Object runInnerBlock() {
         // Run innerBlocks
         NormalBlockBase now = innerBlock;
         while (now != null) {
             now.run();
             now = now.lowerBlock;
         }
+        return null;
     }
 }

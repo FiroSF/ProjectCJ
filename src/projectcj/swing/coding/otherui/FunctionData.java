@@ -23,14 +23,14 @@ public class FunctionData {
         if (count < 0) {
             originalRunner.removeParameter();
         } else {
-            originalRunner.addParameter();
+            originalRunner.addParameter(1);
         }
 
         for (JFunctionRunnerBlock blk : runnerBlocks) {
             if (count < 0) {
                 blk.removeParameter();
             } else {
-                blk.addParameter();
+                blk.addParameter(1);
             }
         }
     }

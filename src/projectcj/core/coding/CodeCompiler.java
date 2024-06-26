@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 
 import projectcj.core.coding.block.NormalBlockBase;
 import projectcj.core.coding.block.ParameterBlockBase;
+import projectcj.core.coding.block.builtin.keyword.ElseBlock;
+import projectcj.core.coding.block.builtin.keyword.IfBlock;
 import projectcj.core.coding.block.scope.ScopableBlock;
 import projectcj.core.coding.block.scope.function.FunctionBlock;
 import projectcj.core.coding.block.scope.function.StartBlock;
@@ -75,7 +77,7 @@ public class CodeCompiler {
     }
 
     /**
-     * Completely compile single normaleBlock.
+     * Completely compile single normalBlock.
      * 
      * @param jNow
      * @param upperScopeBlock
@@ -154,6 +156,11 @@ public class CodeCompiler {
                 now.upperBlock = before;
             } else {
                 scopableBlock.setInnerBlock(now);
+            }
+
+            // Bind if-else
+            if (now instanceof ElseBlock && before instanceof IfBlock) {
+                ((ElseBlock) now).ifBlock = (IfBlock) before;
             }
 
             before = now;

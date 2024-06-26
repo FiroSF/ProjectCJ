@@ -17,8 +17,14 @@ import projectcj.swing.coding.otherui.FunctionData;
 public class JFunctionBlock extends JParameterScopeBlock {
     FunctionData functionData;
 
+    private static Vector<Integer> paramVGen() {
+        Vector<Integer> paramV = new Vector<>();
+        paramV.add(3);
+        return paramV;
+    }
+
     public JFunctionBlock(Display display) {
-        super(display, new Color(0x30455D), "", 1);
+        super(display, new Color(0x30455D), "", paramVGen());
         // X_OFFSET += 60;
     }
 
@@ -89,7 +95,7 @@ public class JFunctionBlock extends JParameterScopeBlock {
 
         // Full
         if (parameters.size() == cnt) {
-            addParameter();
+            addParameter(3);
             functionData.changeParameterCount(1);
         }
 
@@ -114,5 +120,14 @@ public class JFunctionBlock extends JParameterScopeBlock {
 
     public void setFunctionData(FunctionData functionData) {
         this.functionData = functionData;
+    }
+
+    @Override
+    public void addParameter(int type) {
+        super.addParameter(type);
+
+        // Only lvalue
+        // parameters.get(parameters.size() -
+        // 1).gluePoint.setType(GluePoint.LVALUE_BLOCK_TYPE | GluePoint.PARAMETER);
     }
 }

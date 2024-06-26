@@ -24,7 +24,7 @@ public class FunctionRunnerBlock extends ParameterBlockBase {
             VariableNameBlock bodyParam = (VariableNameBlock) function.parameters.get(i);
             NormalBlockBase runnerParam = parameters.get(i);
 
-            stackObj.variables.put(bodyParam.text, runnerParam.run());
+            stackObj.variables.put((String) bodyParam.text, runnerParam.run());
         }
 
         // Stack function

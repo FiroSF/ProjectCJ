@@ -11,6 +11,10 @@ import projectcj.swing.coding.otherui.JBlockSelection;
 import projectcj.swing.coding.otherui.JConsole;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.util.Vector;
 
 public class Display extends JFrame {
@@ -117,6 +121,27 @@ public class Display extends JFrame {
         setSize(1600, 900);
         setVisible(true);
 
+        // Resize listener
+        // https://stackoverflow.com/a/1088673/24828578
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                // https://stackoverflow.com/a/8333218/24828578
+                Rectangle bound = getBounds();
+                c.setBounds(new Rectangle(bound.width - 15, bound.height - 40));
+            }
+        });
+
+        // Resize listener 2 (When fullscreen)
+        // https://stackoverflow.com/a/25570044/24828578
+        addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                // https://stackoverflow.com/a/8333218/24828578
+                Rectangle bound = getBounds();
+                c.setBounds(new Rectangle(bound.width - 15, bound.height - 40));
+            }
+        });
+
         repaint();
         revalidate();
     }
@@ -126,6 +151,11 @@ public class Display extends JFrame {
 
         c.add(console, BorderLayout.EAST, -1);
         c.add(blockSelection, BorderLayout.WEST, -1);
+
+        // https://stackoverflow.com/a/8333218/24828578
+        Rectangle bound = getBounds();
+        // Hard-coded size
+        c.setBounds(new Rectangle(bound.width - 15, bound.height - 40));
 
         repaint();
         revalidate();

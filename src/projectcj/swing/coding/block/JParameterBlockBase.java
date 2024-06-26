@@ -59,19 +59,8 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
 
         // Add params
         for (int i = 0; i < params.size(); i++) {
-            addParameter();
-            // Point gluePos = new Point(newParamX, 10);
-            // ParameterGluePoint glue = new ParameterGluePoint(this, gluePos,
-            // GluePoint.PARAMETER_CHECK);
-            // JParameter param = new JParameter(this, glue, i);
-
-            // parameters.add(param);
-
-            // newParamX += PARAM_DIST;
+            addParameter(params.get(i));
         }
-
-        // And adjust some positions
-        // polygons.get(0).stretchHorizontaly(PARAM_DIST * params.size());
 
         // RValue offset
         BlockText text = texts.get(0);
@@ -85,11 +74,6 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
     @Override
     public void beforeGenerate() {
         super.beforeGenerate();
-
-        // DEFAULT_WIDTH = 160;
-        // DEFAULT_HEIGHT = 40;
-        // additionalHeight = 20;
-        // !!!
     }
 
     @Override
@@ -219,6 +203,7 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
             upperScope.updateScopeHeight(actualDh);
         }
 
+        updateSize();
         return new Point(actualDw, actualDh);
     }
 
@@ -237,45 +222,25 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         return dx;
     }
 
-    // public void makeParameters(Vector<BlockPolygon> v) {
-    // // Make parameter polygons
-    // for (int i = 0; i < parameters.size(); i++) {
-    // // Param width = 60
-    // int[] pxs = { 0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH +
-    // 1, 0 - 1,
-    // 0 - 1, 10 - 1, 10 - 1, 0 - 1 };
-    // int[] pys = { 0 - 1, 0 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1, 10 + 1, 10 + 1 };
-    // BlockPolygon bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
-    // bolygon.stretchHorizontaly(-JParameter.DEFAULT_WIDTH);
-    // bolygon.stretchVertically(-JParameter.DEFAULT_HEIGHT);
-
-    // // Offset
-    // bolygon.xOffset = parameters.get(i).gluePoint.getOffset().x;
-    // bolygon.yOffset = parameters.get(i).gluePoint.getOffset().y;
-
-    // v.add(bolygon);
-    // parameters.get(i).bolygon = bolygon;
-    // }
-    // }
-
     @Override
     public Vector<BlockPolygon> makePolygon() {
         Vector<BlockPolygon> v = super.makePolygon();
-        // makeParameters(v);
-
-        // if (parameters.size() > 0) {
-        // v.get(0).stretchVertically(20);
-        // gluePoints.get(0).moveDelta(0, 20);
-        // }
-
         return v;
     }
 
-    public void addParameter() {
+    public void addParameter(int type) {
         // Add data first
         int idx = parameters.size();
         Point gluePos = new Point(newParamX, 10);
-        ParameterGluePoint glue = new ParameterGluePoint(this, gluePos, GluePoint.PARAMETER_CHECK);
+        ParameterGluePoint glue;
+
+        // LValue, RValue
+        if (type == 1) {
+            glue = new ParameterGluePoint(this, gluePos, GluePoint.PARAMETER_CHECK);
+        } else {
+            glue = new ParameterGluePoint(this, gluePos, GluePoint.LVALUE_BLOCK_TYPE | GluePoint.PARAMETER);
+        }
+
         JParameter param = new JParameter(this, glue, idx);
 
         if (idx == 0) {
@@ -291,11 +256,25 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         newParamX += PARAM_DIST;
 
         // Polygon part
-        // Param width = 60
-        int[] pxs = { 0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH + 1, 0 - 1,
-                0 - 1, 10 - 1, 10 - 1, 0 - 1 };
-        int[] pys = { 0 - 1, 0 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1, 10 + 1, 10 + 1 };
-        BlockPolygon bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
+        // Param width = 60, +-1: white border
+        BlockPolygon bolygon;
+        // LValue, RValue
+        if (type == 1) {
+            int[] pxs = { 0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH + 1, 0 - 1,
+                    0 - 1, 10 - 1, 10 - 1, 0 - 1 };
+            int[] pys = { 0 - 1, 0 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1, 10 + 1, 10 + 1 };
+            bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
+
+        } else {
+            int[] pxs = { 0 - 1, JParameter.DEFAULT_WIDTH + 1, JParameter.DEFAULT_WIDTH + 1,
+                    JParameter.DEFAULT_WIDTH - 10 + 1, JParameter.DEFAULT_WIDTH - 10 + 1, JParameter.DEFAULT_WIDTH + 1,
+                    JParameter.DEFAULT_WIDTH + 1, 0 - 1,
+                    0 - 1, 10 - 1, 10 - 1, 0 - 1 };
+            int[] pys = { 0 - 1, 0 - 1, 10 + 1, 10 + 1, 40 - 10 - 1, 40 - 10 - 1, 40 + 1, 40 + 1, 30 - 1, 30 - 1,
+                    10 + 1, 10 + 1 };
+            bolygon = new BlockPolygon(this, pxs, pys, Color.WHITE);
+
+        }
         bolygon.stretchHorizontaly(-JParameter.DEFAULT_WIDTH);
         bolygon.stretchVertically(-JParameter.DEFAULT_HEIGHT);
 
@@ -305,6 +284,18 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
 
         polygons.add(bolygon);
         parameters.get(idx).bolygon = bolygon;
+
+        if (idx == 0) {
+            if (upperParameter != null) {
+                upperParameter.outerBlock.changeParameterSize(upperParameter.index, PARAM_DIST, 20);
+            } else if (upperScope != null) {
+                upperScope.updateScopeHeight(20);
+            }
+        } else {
+            if (upperParameter != null) {
+                upperParameter.outerBlock.changeParameterSize(upperParameter.index, PARAM_DIST, 0);
+            }
+        }
 
         updateSize();
     }
@@ -323,6 +314,16 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
 
             polygons.get(0).stretchVertically(-20);
             gluePoints.get(0).moveDelta(0, -20);
+
+            if (upperParameter != null) {
+                upperParameter.outerBlock.changeParameterSize(upperParameter.index, -PARAM_DIST, -20);
+            } else if (upperScope != null) {
+                upperScope.updateScopeHeight(-20);
+            }
+        } else {
+            if (upperParameter != null) {
+                upperParameter.outerBlock.changeParameterSize(upperParameter.index, -PARAM_DIST, 0);
+            }
         }
 
         updateSize();

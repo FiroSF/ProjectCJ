@@ -17,34 +17,51 @@ public abstract class JSingleBlockSelection {
     public String tabname;
 
     // Swings
-    JLayeredPane blocksPane = new JLayeredPane();
-    JPanel blockPanel = new JPanel();
+    public JPanel blocksBoxPane = new JPanel();
+    public JPanel blocksWrapper = new JPanel();
     // https://stackoverflow.com/a/10346673/24828578
-    JScrollPane blocksWrapper = new JScrollPane();
+    public JScrollPane blocksScrollWrapper = new JScrollPane();
 
     JSingleBlockSelection(JBlockSelection blockSelection, String tabname) {
         this.blockSelection = blockSelection;
         display = blockSelection.display;
 
         // Event
-        BlockSelectionMouseAdapter mouseAdapter = new BlockSelectionMouseAdapter(this, blockPanel);
-        blockPanel.addMouseMotionListener(mouseAdapter);
-        blockPanel.addMouseListener(mouseAdapter);
+        BlockSelectionMouseAdapter mouseAdapter = new BlockSelectionMouseAdapter(this, blocksBoxPane);
+        blocksWrapper.addMouseMotionListener(mouseAdapter);
+        blocksWrapper.addMouseListener(mouseAdapter);
 
         // https://stackoverflow.com/a/13511696/24828578
-        blocksPane.setLayout(new BoxLayout(blocksPane, BoxLayout.Y_AXIS));
-        blockPanel.add(blocksPane, BorderLayout.CENTER);
-        blocksWrapper.setViewportView(blockPanel);
+        blocksBoxPane.setLayout(new BoxLayout(blocksBoxPane, BoxLayout.Y_AXIS));
 
+        // JLabel sizeHolder = new JLabel(
+        // " ");
+
+        // // lb.setSize(400, 0);
+        // blocksBoxPane.add(sizeHolder);
+        // blockPanel.setLayout(null);
+
+        blocksWrapper.add(blocksBoxPane);
+        blocksScrollWrapper.setViewportView(blocksWrapper);
+        blocksScrollWrapper.setPreferredSize(new Dimension(400, 1000));
         this.tabname = tabname;
     }
 
     /**
      * Tab init function.
      */
-    abstract public void init();
+    public void init() {
+        JLabel sizeHolder = new JLabel(
+                "                                                                                       ");
+
+        // lb.setSize(400, 0);
+        blocksBoxPane.add(sizeHolder);
+        // https://stackoverflow.com/a/5583571/24828578
+        blocksScrollWrapper.getVerticalScrollBar().setUnitIncrement(16);
+        blocksScrollWrapper.getHorizontalScrollBar().setUnitIncrement(16);
+    };
 
     public Container getContainer() {
-        return blocksWrapper;
+        return blocksScrollWrapper;
     }
 }

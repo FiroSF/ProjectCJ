@@ -39,13 +39,13 @@ public abstract class JNormalBlockBase extends JBlockBase {
 
         if (this instanceof JLValue) {
             TYPE |= GluePoint.LVALUE_BLOCK_TYPE;
-            additionalWidth += 10;
+            // additionalWidth += 10;
             // X_OFFSET += 10;
         }
 
         if (this instanceof JRValue) {
             TYPE |= GluePoint.RVALUE_BLOCK_TYPE;
-            additionalWidth += 10;
+            // additionalWidth += 10;
             X_OFFSET += 10;
         }
 
@@ -296,6 +296,9 @@ public abstract class JNormalBlockBase extends JBlockBase {
 
         v.add(new BlockPolygon(this, xs, ys, color));
         v.get(0).stretchHorizontaly(-MINIMUM_WIDTH + 20 + X_OFFSET);
+        if (this instanceof JLValue) {
+            v.get(0).stretchHorizontaly(10);
+        }
         return v;
     }
 

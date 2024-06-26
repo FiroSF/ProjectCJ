@@ -1,4 +1,4 @@
-package projectcj.core.coding.block.builtin.calc;
+package projectcj.core.coding.block.builtin.calc.arithmetic;
 
 import projectcj.core.coding.block.NormalBlockBase;
 import projectcj.core.coding.block.ParameterBlockBase;
@@ -16,16 +16,23 @@ public class AddBlock extends ParameterBlockBase {
         Object tar1 = param1.run();
         Object tar2 = param2.run();
 
-
         if (tar1 instanceof String) {
             return (String) tar1 + (String) tar2;
         }
 
-        if (tar1 instanceof Integer) {
+        if (tar1 instanceof Integer && tar2 instanceof Integer) {
             return (int) tar1 + (int) tar2;
         }
 
-        if (tar1 instanceof Double) {
+        if (tar1 instanceof Double && tar2 instanceof Integer) {
+            return (double) tar1 + (int) tar2;
+        }
+
+        if (tar1 instanceof Integer && tar2 instanceof Double) {
+            return (int) tar1 + (double) tar2;
+        }
+
+        if (tar1 instanceof Double && tar2 instanceof Double) {
             return (double) tar1 + (double) tar2;
         }
 
