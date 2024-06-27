@@ -10,6 +10,12 @@ public class ToIntBlock extends ParameterBlockBase {
 
     @Override
     public Object run() {
-        return Integer.parseInt((String) parameters.get(0).run());
+        Object res = parameters.get(0).run();
+        if (res instanceof Double) {
+            Integer tmp = (int) ((Double) res).doubleValue();
+            return tmp;
+        }
+
+        return Integer.parseInt((String) res);
     }
 }

@@ -10,6 +10,12 @@ public class ToDoubleBlock extends ParameterBlockBase {
 
     @Override
     public Object run() {
-        return Double.parseDouble((String) parameters.get(0).run());
+        Object res = parameters.get(0).run();
+        if (res instanceof Integer) {
+            Double tmp = (double) ((Integer) res).intValue();
+            return tmp;
+        }
+
+        return Double.parseDouble((String) res);
     }
 }
