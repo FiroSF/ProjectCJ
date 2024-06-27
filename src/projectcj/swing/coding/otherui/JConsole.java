@@ -20,7 +20,7 @@ public class JConsole extends JPanel {
 
     // Compiler and Executor
     CodeCompiler compiler;
-    CodeExecutor executor = null;
+    public CodeExecutor executor = null;
 
     // Console input and output streams
     public BufferedReader ins;
@@ -65,6 +65,10 @@ public class JConsole extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String inp = consoleInput.getText();
                 consoleInput.setText("");
+
+                if (executor == null || !executor.isRunning) {
+                    return;
+                }
 
                 write("Input: " + inp + "\n");
                 consoleReader.supplyData(inp + "\n");
@@ -133,6 +137,26 @@ public class JConsole extends JPanel {
      */
     public void stop() {
         executor.stop();
+    }
+
+    public void codeIsRunning() {
+        System.out.println("Code is already running!");
+        consoleMainText.append("=== Code is already running! ===\n");
+    }
+
+    public void codeIsNotRunning() {
+        System.out.println("Code is not running!");
+        consoleMainText.append("=== Code is not running! ===\n");
+    }
+
+    public void notCompiled() {
+        System.out.println("Code has never been compiled!");
+        consoleMainText.append("=== Code has never been compiled! ===\n");
+    }
+
+    public void noStartBlock() {
+        System.out.println("Can't find start block!");
+        consoleMainText.append("=== Can't find start block! ===\n");
     }
 
 }

@@ -1,4 +1,4 @@
-package projectcj.core.coding.block.builtin.string;
+package projectcj.core.coding.block.builtin.cast;
 
 import projectcj.core.coding.block.ParameterBlockBase;
 import projectcj.core.coding.block.scope.ScopableBlock;

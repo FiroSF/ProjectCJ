@@ -7,7 +7,14 @@ public abstract class ParameterBlockBase extends NormalBlockBase {
     public Vector<NormalBlockBase> parameters = new Vector<>();
 
     public boolean trueCheck(Object tar) {
-        return !(tar.equals(0) || tar.equals(false) || tar.equals(null) || tar.equals(""));
+        return !(tar == null || tar.equals(0) || tar.equals(false) || tar.equals(""));
+    }
+
+    public boolean trueCheckBeforeRun(NormalBlockBase tar) {
+        if (tar == null)
+            return false;
+
+        return trueCheck(tar.run());
     }
 
 }

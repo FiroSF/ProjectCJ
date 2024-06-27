@@ -10,6 +10,6 @@ public class OrBlock extends ParameterBlockBase {
 
     @Override
     public Object run() {
-        return trueCheck(parameters.get(0).run()) || trueCheck(parameters.get(1).run());
+        return trueCheckBeforeRun(parameters.get(0)) || trueCheckBeforeRun(parameters.get(1));
     }
 }

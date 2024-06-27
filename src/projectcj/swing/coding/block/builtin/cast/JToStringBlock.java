@@ -1,28 +1,28 @@
-package projectcj.swing.coding.block.builtin.string;
+package projectcj.swing.coding.block.builtin.cast;
 
 import java.awt.Color;
 import projectcj.core.coding.block.BlockBase;
-import projectcj.core.coding.block.builtin.string.SplitBlock;
+import projectcj.core.coding.block.builtin.cast.ToStringBlock;
 import projectcj.core.coding.block.scope.ScopableBlock;
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.JFunctionRunnerBlockBase;
 import projectcj.swing.coding.block.variable.JRValue;
 
-public class JSplitBlock extends JFunctionRunnerBlockBase implements JRValue {
-    public JSplitBlock(Display display) {
-        super(display, new Color(0xFFC200), "Split", 2);
+public class JToStringBlock extends JFunctionRunnerBlockBase implements JRValue {
+    public JToStringBlock(Display display) {
+        super(display, new Color(0xFFC200), "To string", 1);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T extends BlockBase> T getCoreClassObj(ScopableBlock scope) {
-        return (T) new SplitBlock(scope);
+        return (T) new ToStringBlock(scope);
     }
 
     @Override
     protected JBlockBase instantiateMe() {
-        JSplitBlock newv = new JSplitBlock(display);
+        JToStringBlock newv = new JToStringBlock(display);
         return newv;
     }
 }

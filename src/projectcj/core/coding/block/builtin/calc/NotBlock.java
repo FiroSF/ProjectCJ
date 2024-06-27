@@ -10,6 +10,6 @@ public class NotBlock extends ParameterBlockBase {
 
     @Override
     public Object run() {
-        return !trueCheck(parameters.get(0).run());
+        return !trueCheckBeforeRun(parameters.get(0));
     }
 }

@@ -16,7 +16,7 @@ public class WriteBlock extends ParameterBlockBase {
             Object paramReturnValue = parameters.get(0).run();
             upperScope.getGlobal().outs.write(paramReturnValue.toString() + "\n");
             upperScope.getGlobal().outs.flush();
-            System.out.println(paramReturnValue.toString());
+            // System.out.println(paramReturnValue.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

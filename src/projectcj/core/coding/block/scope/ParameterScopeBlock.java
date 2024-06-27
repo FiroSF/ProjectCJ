@@ -26,7 +26,7 @@ public abstract class ParameterScopeBlock extends ParameterBlockBase implements 
             Object res = now.run();
 
             // Function return
-            Stack<FunctionStackObj> stk = upperScope.getGlobal().functionCallStack;
+            Stack<FunctionStackObj> stk = getGlobal().functionCallStack;
             if (!stk.empty() && stk.peek().returnValue != null) {
                 return new BreakSignal();
             }

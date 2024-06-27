@@ -10,6 +10,6 @@ public class EqBlock extends ParameterBlockBase {
 
     @Override
     public Object run() {
-        return parameters.get(0).run().equals(trueCheck(parameters.get(1).run()));
+        return parameters.get(0).run().equals(parameters.get(1).run());
     }
 }

@@ -93,4 +93,8 @@ public class JBlockSelection extends JPanel {
         functions.remove(functionBlock.blockName);
     }
 
+    public FunctionData getFunction(String blockName) {
+        return functions.get(blockName);
+    }
+
 }

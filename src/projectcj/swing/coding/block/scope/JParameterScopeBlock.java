@@ -160,7 +160,7 @@ abstract public class JParameterScopeBlock extends JParameterBlockBase implement
         // System.out.println("!!");
 
         // Stratch body
-        int realdx = Math.max(0, getTrueWidth() - getCalcedWidth() + dx);
+        int realdx = Math.max(0, getTrueWidth() - getCalcedWidth()) + dx;
         polygons.get(0).stretchHorizontaly(realdx);
         polygons.get(1).stretchHorizontaly(realdx);
 

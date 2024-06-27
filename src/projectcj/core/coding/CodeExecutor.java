@@ -18,9 +18,10 @@ public class CodeExecutor {
     public HashMap<String, FunctionBlock> functions = new HashMap<>();
     public BufferedReader ins;
     public BufferedWriter outs;
-    StartBlock startBlock;
+    public StartBlock startBlock;
     Thread process;
     public boolean isInterrupted;
+    public boolean isRunning = false;
 
     public void setStartBlock(StartBlock startBlock) {
         this.startBlock = startBlock;
@@ -32,37 +33,46 @@ public class CodeExecutor {
     }
 
     public void run() throws Exception {
-        if (startBlock == null) {
-            throw new Exception("There is no start block!");
-        }
 
         Runnable codeRunnable = new Runnable() {
+            void resolveError(String traces) {
+                isRunning = false;
+                System.out.println(traces);
+                try {
+                    outs.write("=== Program crashed! ===\n");
+                    outs.write(traces);
+                    outs.write("=== See details at java console ===\n");
+                    outs.flush();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
             @Override
             public void run() {
                 try {
                     System.out.println("Run start");
                     outs.write("=== Program start ===\n");
                     outs.flush();
+                    isRunning = true;
 
                     startBlock.run();
 
+                    isRunning = false;
                     System.out.println("Run end");
                     outs.write("=== Program end ===\n");
                     outs.flush();
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    try {
-                        outs.write("=== Program crashed! ===\n");
-                        // https://www.baeldung.com/java-stacktrace-to-string
-                        StringWriter sw = new StringWriter();
-                        PrintWriter pw = new PrintWriter(sw);
-                        e.printStackTrace(pw);
-                        outs.write(sw.toString());
-                        outs.write("=== See details at java console ===\n");
-                        outs.flush();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+                    // https://www.baeldung.com/java-stacktrace-to-string
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    resolveError(sw.toString());
+                } catch (StackOverflowError e) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    resolveError(sw.toString());
                 }
             }
         };
@@ -72,6 +82,7 @@ public class CodeExecutor {
     }
 
     public void stop() {
+        // https://ict-nroo.tistory.com/22
         process.interrupt();
         try {
             System.out.println("Program stopped");

@@ -145,6 +145,8 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
      * @return {actualDw, actualDh}
      */
     public Point changeParameterSize(int index, int dw, int dh) {
+        if (parameters.size() <= index)
+            return new Point(0, 0);
         JParameter now = parameters.get(index);
 
         // Actual dw and dh
@@ -300,12 +302,31 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
         updateSize();
     }
 
+    /**
+     * Remove parameter. If there is block, disconnects.
+     */
     public void removeParameter() {
+        JParameter targetParam = parameters.get(parameters.size() - 1);
+        // int paramDist = targetParam.width + 20;
+        // System.out.println(targetParam.width);
+        int paramDist = PARAM_DIST;
+
+        // If there is another block
+        if (targetParam.innerBlock != null) {
+            JNormalBlockBase tmp = (JNormalBlockBase) targetParam.innerBlock;
+
+            // Move original block
+            Point newP = targetParam.gluePoint.getPoint();
+            newP.translate(10, 10);
+            tmp.disconnect(newP);
+        }
+
+        // Remove!
         parameters.removeElementAt(parameters.size() - 1);
         polygons.remove(polygons.size() - 1);
-        newParamX -= PARAM_DIST;
 
-        polygons.get(0).stretchHorizontaly(-PARAM_DIST);
+        newParamX -= paramDist;
+        polygons.get(0).stretchHorizontaly(-paramDist);
 
         if (parameters.size() == 0) {
             for (BlockText text : texts) {
@@ -316,13 +337,13 @@ public abstract class JParameterBlockBase extends JNormalBlockBase {
             gluePoints.get(0).moveDelta(0, -20);
 
             if (upperParameter != null) {
-                upperParameter.outerBlock.changeParameterSize(upperParameter.index, -PARAM_DIST, -20);
+                upperParameter.outerBlock.changeParameterSize(upperParameter.index, -paramDist, -20);
             } else if (upperScope != null) {
                 upperScope.updateScopeHeight(-20);
             }
         } else {
             if (upperParameter != null) {
-                upperParameter.outerBlock.changeParameterSize(upperParameter.index, -PARAM_DIST, 0);
+                upperParameter.outerBlock.changeParameterSize(upperParameter.index, -paramDist, 0);
             }
         }
 

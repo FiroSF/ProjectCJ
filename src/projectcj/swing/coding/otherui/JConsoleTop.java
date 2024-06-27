@@ -18,7 +18,17 @@ public class JConsoleTop extends JPanel {
         compileStartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (console.executor != null && console.executor.isRunning) {
+                    console.codeIsRunning();
+                    return;
+                }
                 console.compile();
+
+                if (console.executor.startBlock == null) {
+                    console.noStartBlock();
+                    console.executor = null;
+                    return;
+                }
                 console.start();
             }
         });
@@ -26,6 +36,19 @@ public class JConsoleTop extends JPanel {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (console.executor != null && console.executor.isRunning) {
+                    console.codeIsRunning();
+                    return;
+                }
+                if (console.executor == null) {
+                    console.notCompiled();
+                    return;
+                }
+                if (console.executor.startBlock == null) {
+                    console.noStartBlock();
+                    console.executor = null;
+                    return;
+                }
                 console.start();
             }
         });
@@ -33,6 +56,10 @@ public class JConsoleTop extends JPanel {
         compileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (console.executor != null && console.executor.isRunning) {
+                    console.codeIsRunning();
+                    return;
+                }
                 console.compile();
             }
         });
@@ -40,6 +67,10 @@ public class JConsoleTop extends JPanel {
         stopButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (console.executor == null || !console.executor.isRunning) {
+                    console.codeIsNotRunning();
+                    return;
+                }
                 console.stop();
             }
         });

@@ -2,6 +2,8 @@ package projectcj.swing.coding.otherui;
 
 import projectcj.swing.coding.Display;
 import projectcj.swing.coding.block.JBlockBase;
+import projectcj.swing.coding.block.scope.function.JFunctionBlock;
+import projectcj.swing.coding.block.scope.function.JStartBlock;
 import projectcj.swing.coding.block.special.BlockPolygon;
 import projectcj.swing.coding.otherui.blockSelections.JSingleBlockSelection;
 import java.awt.*;
@@ -62,8 +64,23 @@ public class BlockSelectionMouseAdapter extends MouseAdapter {
 
                 if (polygon.contains(mousePoint)) {
                     System.out.println("Block FOUND!");
-                    // Copy block
 
+                    // Start block checking
+                    if (block instanceof JStartBlock) {
+                        if (display.hasStartBlock) {
+                            return;
+                        } else {
+                            display.hasStartBlock = true;
+                        }
+                    }
+
+                    // Same name function checking
+                    if (block instanceof JFunctionBlock
+                            && display.getFunction(((JFunctionBlock) block).blockName) != null) {
+                        return;
+                    }
+
+                    // Copy block
                     try {
                         JBlockBase newBlock = (JBlockBase) block.clone();
                         newBlock.xoffset = mousePoint.x;// - block.getX();

@@ -29,6 +29,7 @@ public class JT3BlockSelection extends JSingleBlockSelection {
         JTextField functionNameTextField = new JTextField();
         functionBlock.setInnerText("function");
 
+        // Placeholder
         String functionPlaceholderText = "Input your custom function name.";
         functionNameTextField.setForeground(Color.GRAY);
         functionNameTextField.setText(functionPlaceholderText);
@@ -47,14 +48,17 @@ public class JT3BlockSelection extends JSingleBlockSelection {
                     functionNameTextField.setText(functionPlaceholderText);
                     functionNameTextField.setForeground(Color.GRAY);
                     functionBlock.setInnerText("function");
+                    functionBlock.updateSize();
                 }
             }
         });
 
+        // Set name
         functionNameTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 functionBlock.setInnerText(functionNameTextField.getText());
+                functionBlock.updateSize();
                 blocksBoxPane.repaint();
                 blocksBoxPane.revalidate();
             }
@@ -77,6 +81,7 @@ public class JT3BlockSelection extends JSingleBlockSelection {
      */
     public void addFunction(JFunctionRunnerBlock runnerBlock) {
         blocksBoxPane.add(runnerBlock);
+        blocksBoxPane.add(Box.createVerticalStrut(10));
         blks.add(runnerBlock);
     }
 

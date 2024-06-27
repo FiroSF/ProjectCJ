@@ -4,7 +4,6 @@ import javax.swing.Box;
 
 import projectcj.swing.coding.block.JBlockBase;
 import projectcj.swing.coding.block.builtin.stllike.vector.*;
-import projectcj.swing.coding.block.builtin.string.JSplitBlock;
 import projectcj.swing.coding.otherui.JBlockSelection;
 
 public class JT4BlockSelection extends JSingleBlockSelection {

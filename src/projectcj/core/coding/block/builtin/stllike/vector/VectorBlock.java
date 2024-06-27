@@ -14,7 +14,7 @@ public class VectorBlock extends ParameterBlockBase {
     public Object run() {
         Vector<Object> v = new Vector<Object>();
 
-        if (parameters.size() > 0) {
+        if (parameters.get(0) != null) {
             int siz = (int) parameters.get(0).run();
             while (v.size() < siz)
                 v.add(null);

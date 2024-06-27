@@ -7,6 +7,7 @@ import projectcj.swing.coding.block.JParameterBlockBase;
 import projectcj.swing.coding.block.scope.function.JFunctionBlock;
 import projectcj.swing.coding.block.special.GluePoint;
 import projectcj.swing.coding.block.special.JParameter;
+import projectcj.swing.coding.otherui.FunctionData;
 import projectcj.swing.coding.otherui.JBlockSelection;
 import projectcj.swing.coding.otherui.JConsole;
 
@@ -56,6 +57,8 @@ public class Display extends JFrame {
     int mouseX = 0;
     int mouseY = 0;
 
+    public boolean hasStartBlock = false;
+
     public int getMouseX() {
         return mouseX;
     }
@@ -66,6 +69,7 @@ public class Display extends JFrame {
 
     public Display() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("ProjectCJ");
 
         upperc = new JPanel();
         setContentPane(upperc);
@@ -239,5 +243,9 @@ public class Display extends JFrame {
 
     public void removeFunciton(JFunctionBlock functionBlock) {
         blockSelection.removeFunction(functionBlock);
+    }
+
+    public FunctionData getFunction(String blockName) {
+        return blockSelection.getFunction(blockName);
     }
 }
